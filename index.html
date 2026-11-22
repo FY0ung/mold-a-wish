@@ -494,10 +494,44 @@ h1, h2, h3, p { margin: 0; }
 .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
 .loader { position: fixed; z-index: 50; inset: 0; display: grid; place-content: center; justify-items: center; gap: 16px; background: var(--mw-veil-bg); color: var(--c-text-primary-onlight); font-size: 13px; font-weight: 500; transition: opacity 500ms ease, visibility 0s linear 500ms; }
 .is-ready .loader { opacity: 0; visibility: hidden; }
-.loader-dots { display: flex; gap: 10px; }
-.loader-dots i { width: 18px; height: 18px; border-radius: 50%; animation: knead 1s var(--ease-out) infinite alternate; }
-.loader-dots i:nth-child(1) { background: var(--pigeon-300); } .loader-dots i:nth-child(2) { background: var(--lilac-300); animation-delay: .15s; } .loader-dots i:nth-child(3) { background: var(--illusion-300); animation-delay: .3s; }
-@keyframes knead { 0% { transform: translateY(0) scale(1, 1); } 100% { transform: translateY(-12px) scale(.9, 1.12); } }
+/* "A Little Wish Comes to Life": clay petals gather → the lotus krathong → the candle lights → it floats on small ripples
+   (one pass, ~1.6 s; then only the float and the ripples loop). Pure SVG + CSS: no second 3D scene, silent. */
+.loader { gap: 0; padding: env(safe-area-inset-top, 0px) 24px env(safe-area-inset-bottom, 0px); height: 100dvh; text-align: center; }
+.lw-stage { width: min(220px, 58vw); aspect-ratio: 160 / 128; }
+.lw { display: block; width: 100%; height: 100%; overflow: visible; }
+.lw * { transform-box: fill-box; transform-origin: 50% 100%; }
+.lw-brand { margin-top: 18px; font-family: "Poppins", var(--font-base); font-size: 26px; line-height: 1.2; font-weight: 300; letter-spacing: -.02em; color: var(--text-primary-on-light); }
+.lw-msg { margin-top: 6px; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--c-text-onlight); }
+.lw-error { display: grid; justify-items: center; gap: 10px; margin-top: 18px; font-size: 14px; color: var(--c-text-onlight); }
+.lw-error[hidden] { display: none; }
+.loader.is-error .lw-msg { display: none; }
+.lw-shadow { fill: rgba(37, 41, 65, .12); }
+:root[data-theme="dark"] .lw-shadow { fill: rgba(0, 0, 0, .45); }
+.lw-ripple { fill: none; stroke: var(--pigeon-300); stroke-width: 1.4; opacity: 0; transform-origin: 50% 50%; }
+:root[data-theme="dark"] .lw-ripple { stroke: rgba(171, 194, 229, .55); }
+/* the sculpting: each piece starts off to its side, small, and settles into place */
+.lw-petal, .lw-leaf { animation: lw-gather 620ms cubic-bezier(.4, 0, .2, 1) both; }
+.lw-l1, .lw-l2 { animation-delay: 80ms; } .lw-p1, .lw-p2 { animation-delay: 220ms; } .lw-p3, .lw-p4 { animation-delay: 360ms; }
+.lw-base { animation: lw-pop 520ms cubic-bezier(.4, 0, .2, 1) 120ms both; transform-origin: 50% 50%; }
+.lw-candle { animation: lw-rise 460ms cubic-bezier(.4, 0, .2, 1) 760ms both; }
+.lw-flame { animation: lw-light 360ms cubic-bezier(.4, 0, .2, 1) 1120ms both, lw-flicker 1.6s ease-in-out 1480ms infinite; }
+.lw-glow { opacity: 0; transform-origin: 50% 50%; animation: lw-glow 600ms ease-out 1160ms forwards, lw-breathe 2.4s ease-in-out 1760ms infinite; }
+.lw-boat { animation: lw-float 3.2s ease-in-out 1500ms infinite; }
+.lw-ripple { animation: lw-ripple 2.7s ease-out infinite; }
+.lw-ripple:nth-child(1) { animation-delay: 1.5s; } .lw-ripple:nth-child(2) { animation-delay: 2.4s; } .lw-ripple:nth-child(3) { animation-delay: 3.3s; }
+@keyframes lw-gather { from { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(.35) rotate(-14deg); } 70% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes lw-pop { from { opacity: 0; transform: scale(.55, .4); } to { opacity: 1; transform: none; } }
+@keyframes lw-rise { from { opacity: 0; transform: translateY(10px) scale(.6); } to { opacity: 1; transform: none; } }
+@keyframes lw-light { from { opacity: 0; transform: scale(0); } 60% { opacity: 1; transform: scale(1.12, .9); } to { opacity: 1; transform: none; } }
+@keyframes lw-flicker { 0%, 100% { transform: scale(1) rotate(0); } 35% { transform: scale(.94, 1.06) rotate(-3deg); } 70% { transform: scale(1.04, .97) rotate(2deg); } }
+@keyframes lw-glow { to { opacity: .9; } }
+@keyframes lw-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@keyframes lw-float { 0%, 100% { transform: translateY(0) rotate(0); } 30% { transform: translateY(-3px) rotate(-1.4deg); } 65% { transform: translateY(-1px) rotate(1.2deg); } }
+@keyframes lw-ripple { 0% { opacity: 0; transform: scale(.55); } 18% { opacity: .55; } 100% { opacity: 0; transform: scale(1.45); } }
+/* leaving: the little krathong settles, one ripple opens out, the veil fades and the real scene is there */
+.is-ready .lw-boat { animation: none; transform: translateY(4px) scale(.97); transition: transform 420ms cubic-bezier(.4, 0, .2, 1); }
+.is-ready .lw-ripples { transform: scale(1.5); opacity: 0; transition: transform 500ms ease-out, opacity 500ms ease-out; transform-origin: 50% 50%; }
+@media (prefers-reduced-motion: reduce) { .lw *, .lw-boat, .lw-ripple { animation: none !important; } .lw-glow { opacity: .9; } .lw-ripple:nth-child(1) { opacity: .4; } }
 .fallback { display: none; position: fixed; z-index: 60; inset: 0; place-content: center; justify-items: center; text-align: center; gap: 12px; padding: 48px; background: linear-gradient(160deg, #FEFCFF, #EFF4FB 52%, #FBF2F7); }
 :root:not([data-theme="dark"]) .fallback { background: var(--mw-canvas); }
 .no-webgl .fallback { display: grid; } .no-webgl .loader { display: none; }
@@ -849,7 +883,12 @@ h1, h2, h3, p { margin: 0; }
   color: var(--ink); box-shadow: 0 0 0 1px color-mix(in srgb, var(--border-default) 70%, transparent), 0 12px 26px -14px rgba(37, 41, 65, .45); pointer-events: auto; cursor: default;
   transition: opacity 320ms ease, scale 320ms var(--ease-out); }
 :root[data-theme="dark"] .river-you.is-wish, :root[data-theme="dark"] .river-peek { background: color-mix(in srgb, var(--mw-black) 66%, transparent); color: #F4F2FA; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 14px 30px -14px rgba(0, 0, 0, .7); }
-.river-you.is-wish::after, .river-peek::after { bottom: -5px; width: 10px; height: 10px; background: inherit; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 1px 1px 0 color-mix(in srgb, var(--border-default) 70%, transparent); }
+/* the wish bubble's tail: a rounded triangle cut from the bubble's own colour, hanging just below the body. The old tail was a
+   rotated square half inside the body: on a translucent bubble its upper half doubled the colour (a darker diamond, worst
+   in dark mode) and its own 1 px shadow outlined it. Nothing overlaps now, nothing is rotated, no shadow and no backdrop
+   filter of its own (a backdrop inside a blurred parent samples nothing and can turn black). */
+.river-you.is-wish::after, .river-peek::after { content: ""; position: absolute; left: 50%; top: 100%; bottom: auto; width: 16px; height: 8px; margin-left: -8px; transform: none;
+  background: inherit; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; clip-path: path("M0 0H16L9.4 6.6Q8 8 6.6 6.6Z"); pointer-events: none; }
 .river-you .rw-k, .river-peek .rw-k { font-size: 11px; font-weight: 600; color: var(--c-text-primary-onlight); letter-spacing: .02em; }
 :root[data-theme="dark"] .river-you .rw-k, :root[data-theme="dark"] .river-peek .rw-k { color: #C9D3F0; }
 .river-you .rw-t, .river-peek .rw-t { font-size: 13px; line-height: 1.5; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -875,7 +914,8 @@ h1, h2, h3, p { margin: 0; }
   border-radius: 50%; background: inherit; -webkit-backdrop-filter: inherit; backdrop-filter: inherit; border: inherit; box-shadow: 0 6px 14px -8px rgba(37, 41, 65, .35), inset 0 1px 0 rgba(255, 255, 255, .55); }
 .panel.fah-wish::after { left: var(--d2x); top: var(--d2y); width: 10px; height: 10px; }
 :root[data-theme="dark"] .panel.fah-wish::before, :root[data-theme="dark"] .panel.fah-wish::after { box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .06); }
-.panel.fah-wish h2 { font-size: 20px; }
+.panel.fah-wish h2 { margin-top: 0; font-size: 20px; }
+.wish-peek, .wish-foot:empty { display: none; }   /* phone-sheet parts: the desktop bubble keeps its actions in the dock below
 
 /* ---------- crafting from the map: the chosen place and a way back, in place of the opening heading ---------- */
 .map-craft-head { position: absolute; left: 32px; top: 80px; display: grid; justify-items: start; gap: 4px; max-width: 440px; }
@@ -933,12 +973,25 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
   .craft-dock .opt, .craft-dock .swatch { scroll-snap-align: start; height: 66px; }
   .bubble { white-space: normal; max-width: min(240px, 70vw); text-align: center; }
 
-  /* the wish: FAH's form becomes a bottom sheet over the krathong; the keyboard (--kb) lifts it, the two actions wait below */
-  .panel.fah-wish { position: fixed; left: calc(8px + var(--sa-l)) !important; right: calc(8px + var(--sa-r)); top: auto !important; width: auto;
-    bottom: calc(80px + var(--sa-b)); max-height: calc(100dvh - var(--bar-h) - var(--sa-t) - 96px - var(--sa-b)); overflow-y: auto; overscroll-behavior: contain; padding: 18px 16px 16px; border-radius: 24px; }
+  /* the wish: FAH's form is a bottom sheet like the craft sheet (peek · half · full); its two actions sit in its footer */
+  .panel.fah-wish { position: fixed; left: calc(6px + var(--sa-l)) !important; right: calc(6px + var(--sa-r)); top: auto !important; bottom: 0; width: auto;
+    height: var(--sheet-h, 50dvh); max-height: none; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 0 16px calc(10px + var(--sa-b));
+    border-radius: 24px 24px 0 0; border-bottom: 0; transform: translateY(24px);
+    transition: opacity var(--t-clay) ease, transform 360ms var(--ease-soft), height 320ms cubic-bezier(.4, 0, .2, 1), bottom 240ms ease, visibility 0s linear var(--t-clay); }
+  .scene-wish .panel.fah-wish[data-scene~="wish"] { transform: none; }
+  .panel.fah-wish.is-dragging { transition: none; }
   .panel.fah-wish::before, .panel.fah-wish::after { display: none; }
-  .kb-open .panel.fah-wish { bottom: calc(var(--kb) + 8px); max-height: calc(100dvh - var(--kb) - 60px - var(--sa-t)); }
-  .kb-open .dock[data-scene~="wish"] { visibility: hidden; }
+  .panel.fah-wish h2 { flex: none; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .wish-peek { flex: none; margin-top: -4px; font-size: 13px; line-height: 1.5; color: var(--c-text-onlight); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; touch-action: none; }
+  .panel.fah-wish[data-snap="peek"] .wish-peek:not(:empty) { display: block; }
+  .wish-body { flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; margin: 0 -4px; padding: 0 4px 4px; }
+  .panel.fah-wish[data-snap="peek"] .wish-body, .panel.fah-wish[data-snap="peek"] .wish-foot { visibility: hidden; }
+  .wish-foot { flex: none; display: flex; justify-content: flex-end; gap: 16px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--border-default) 55%, transparent); }
+  :root[data-theme="dark"] .wish-foot { border-top-color: rgba(255, 255, 255, .07); }
+  .wish-foot .btn { flex: 0 1 auto; min-width: 0; height: 48px; padding: 0 16px; font-size: 14px; }
+  .dock[data-scene~="wish"] { display: none; }
+  /* the keyboard: the sheet rides on top of it, never taller than what is left, the footer's safe-area gap drops */
+  .kb-open .panel.fah-wish { bottom: var(--kb); height: min(var(--sheet-h, 50dvh), calc(100dvh - var(--kb) - var(--bar-h) - var(--sa-t) - 8px)); padding-bottom: 10px; }
   .panel.fah-wish h2 { font-size: 18px; }
   .field textarea { height: 88px; font-size: 16px; }                                 /* 16 px: iOS does not zoom into the field */
   .chips .chip { min-height: 40px; }
@@ -976,14 +1029,64 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
   .lens { width: 240px; height: 240px; margin: -120px 0 0 -120px; }
   .lens::before { width: 150px; height: 42px; margin: -21px 0 0 -75px; }
   .lens i { width: 140px; height: 50px; margin: -25px 0 0 -70px; }
-  .done { left: calc(16px + var(--sa-l)); right: calc(16px + var(--sa-r)); top: 330px; bottom: 0; transform: none; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(24px + var(--sa-b)); }
-  .done h2 { margin-top: 12px; font-size: 26px; }
-  .wish-card { margin-top: 14px; padding: 16px; }
-  .wish-card q { font-size: 16px; }
-  .story-row { flex-direction: column; align-items: stretch; }
-  .story-thumb { width: min(46vw, 200px); height: auto; aspect-ratio: 9 / 16; align-self: center; }
-  .done-actions { flex-direction: column; margin-top: 4px; }
-  .done-actions .btn { width: 100%; }
+  /* the release success: one screen under the bar — the words + Story thumbnail, the krathong in the free middle, the action bar */
+  .done { position: fixed; left: 0; right: 0; top: calc(var(--bar-h) + var(--sa-t)); bottom: 0; transform: none; display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden; pointer-events: none; }
+  .scene-done .done { transform: none; }
+  .done > * { pointer-events: auto; }
+  .done .story-row { display: none; }
+  .done-top { display: flex; gap: 12px; align-items: flex-start; padding: 28px calc(16px + var(--sa-r)) 0 calc(16px + var(--sa-l)); }   /* 28 px: clear of the map credits */
+  .done-id { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .done h2 { margin: 0; font-size: 20px; line-height: 1.4; font-weight: 400; letter-spacing: 0; text-wrap: balance; }
+  .done h2 br { display: none; }
+  .done .where { height: 26px; padding: 0 10px; font-size: 12px; max-width: 100%; }
+  .done .rel-status { margin: 0; min-height: 0; font-size: 12px; line-height: 1.5; }
+  .done .rel-status.is-ok { display: none; }                                          /* the heading already says it */
+  .done .wish-card { position: relative; margin: 2px 0 0; width: 100%; max-width: none; padding: 10px 14px; border-radius: 18px; }
+  .done .wish-card.is-empty { display: none; }
+  .done .wish-card q { font-size: 14px; line-height: 1.55; font-weight: 400; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+  .done .wish-card footer { margin-top: 4px; font-size: 11px; }
+  .done .wish-card footer:has(#done-wish-foot:empty), .done .wish-card footer:has(#done-wish-foot[data-kind="public"]) { display: none; }
+  .wish-more { position: static; display: block; margin: 2px 0 0 auto; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; color: var(--c-text-onlight); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .wish-more::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }   /* the whole card is the tap target */
+  .wish-more:focus-visible { outline: none; } .wish-more:focus-visible::after { box-shadow: 0 0 0 2px var(--focus); }
+  .wish-more[hidden] { display: none; }
+  .done .story-thumb { flex: none; width: 64px; height: auto; aspect-ratio: 9 / 16; border-radius: 12px; cursor: pointer; }
+  .done .story-thumb::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(transparent, rgba(10, 12, 30, .45)); pointer-events: none; }
+  .done .story-thumb:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .done-stage { min-height: 150px; }
+  /* the action bar: the same glass as the craft and wish sheets; share leads, save beside it, the rest folds into "เพิ่มเติม" */
+  .done-bar { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px calc(12px + var(--sa-r)) calc(10px + var(--sa-b)) calc(12px + var(--sa-l)); margin: 0 6px;
+    border-radius: 24px 24px 0 0; border: 1px solid color-mix(in srgb, var(--border-default) 70%, transparent); border-bottom: 0;
+    background: color-mix(in srgb, var(--mw-canvas) 62%, transparent); -webkit-backdrop-filter: blur(22px) saturate(1.15); backdrop-filter: blur(22px) saturate(1.15);
+    box-shadow: 0 -12px 32px -20px rgba(37, 41, 65, .35), inset 0 1px 0 rgba(255, 255, 255, .55); }
+  :root[data-theme="dark"] .done-bar { background: linear-gradient(rgba(37, 41, 65, .2), rgba(37, 41, 65, .2)), color-mix(in srgb, var(--mw-black) 58%, transparent);
+    border-color: rgba(255, 255, 255, .09); box-shadow: 0 -12px 32px -18px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .06); }
+  .done-bar .done-actions { display: contents; }
+  .done-bar .done-actions .btn { width: auto; min-width: 0; height: 48px; padding: 0 12px; font-size: 14px; }
+  .done-bar #btn-mine, .done-bar .done-more-btn { height: 44px; padding: 0 10px; font-size: 14px; color: var(--ink); background: transparent; box-shadow: none; }
+  .done-bar #btn-mine { justify-self: start; }
+  .done-more-btn { justify-self: end; display: inline-flex; align-items: center; gap: 6px; }
+  .done-more-btn svg { transition: transform 200ms ease; }
+  .done-more-btn[aria-expanded="false"] svg { transform: rotate(180deg); }
+  .done-more { position: absolute; right: calc(6px + var(--sa-r)); bottom: calc(100% + 8px); width: min(280px, calc(100vw - 24px)); padding: 6px; border-radius: 20px;
+    background: var(--glass); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: var(--dropshadow-400), inset 0 0 0 1px color-mix(in srgb, var(--border-default) 70%, transparent); }
+  .done-more[hidden] { display: none; }
+  .done-more .done-links { display: grid; gap: 2px; }
+  .done-more .btn { width: 100%; height: 44px; justify-content: flex-start; padding: 0 14px; font-size: 14px; color: var(--ink); background: transparent; box-shadow: none; border-radius: 14px; }
+  .done-more .btn:hover:not(:disabled), .done-more .btn:focus-visible { background: color-mix(in srgb, var(--c-bg-light) 80%, transparent); }
+  :root[data-theme="dark"] .done-more .btn:hover:not(:disabled), :root[data-theme="dark"] .done-more .btn:focus-visible { background: rgba(255, 255, 255, .08); }
+  .done-more .proto { margin: 4px 14px 8px; font-size: 12px; color: var(--c-text-onlight); }
+  .done-more .proto:empty { display: none; }
+  /* landscape phones: the krathong on the left, the words and actions on the right; a short column scrolls on its own as the fallback */
+  @media (orientation: landscape) and (max-height: 560px) {
+    .done { grid-template-columns: minmax(0, 1fr) minmax(300px, 48%); grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .done-top { grid-column: 2; grid-row: 1; padding-top: 12px; }
+    .done-stage { grid-column: 1; grid-row: 1 / -1; min-height: 0; }
+    .done-bar { grid-column: 2; grid-row: 3; }
+  }
+  /* very short or very large text: the words keep their size, the page may scroll rather than clip */
+  @media (max-height: 600px) and (orientation: portrait) { .done { overflow-y: auto; } .done-top { padding-top: 24px; } .done-stage { min-height: 140px; } }
   .toast { bottom: calc(96px + var(--sa-b)); max-width: calc(100vw - 32px); white-space: normal; text-align: center; }
 
   /* the clay-from-picture dialog: a full-height sheet, one column, actions always reachable */
@@ -1000,8 +1103,43 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 @media (prefers-reduced-motion: reduce) { .panel.place-card { transition: none; } }
 
 /* ---------- desktop: the sheet-only parts stay out of the way; the theme/sound pair sits in the bar as before ---------- */
-.bar-prefs { display: contents; }
-.bar-more, .sheet-grab { display: none; }
+.sheet-grab { display: none; }
+.done-top, .done-stage, .done-bar, .wish-more { display: none; }
+/* the river on phones: a one-time swipe hint and the way back to your krathong (desktop: neither) */
+.river-hint, .river-home { display: none; }
+@media (max-width: 1023px) {
+  .river-hint:not([hidden]) { position: fixed; z-index: 7; left: 50%; bottom: calc(96px + var(--sa-b)); display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px;
+    border-radius: var(--radius-full); background: var(--ov-glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: var(--ov-line); color: var(--ov-ink);
+    font-size: 13px; white-space: nowrap; pointer-events: none; translate: -50% 8px; opacity: 0; transition: opacity 300ms ease, translate 400ms var(--ease-soft); }
+  .river-hint.is-on { opacity: 1; translate: -50% 0; }
+  .river-hint svg { animation: rv-swipe 2.4s ease-in-out infinite; }
+  .river-home:not([hidden]) { position: fixed; z-index: 7; right: calc(16px + var(--sa-r)); bottom: calc(92px + var(--sa-b)); display: inline-flex; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ov-glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: var(--ov-line); color: var(--ov-ink); }
+}
+@keyframes rv-swipe { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .river-hint svg { animation: none; } .river-hint { transition: none; } }
+@media (max-width: 1023px) { .done-top { display: flex; } .done-stage { display: block; pointer-events: none; } .done-bar { display: grid; } .wish-more:not([hidden]) { display: block; } .is-busy .done > * { pointer-events: none; } }
+/* the Story and the wish in full (phones): native dialogs, inside the safe areas */
+dialog.sv, dialog.wv { margin: 0; padding: 0; border: 0; color: var(--ink); max-width: none; max-height: none; }
+dialog.sv::backdrop, dialog.wv::backdrop { background: rgba(10, 12, 30, .6); }
+dialog.sv { inset: 0; width: 100vw; height: 100dvh; display: none; flex-direction: column; gap: 12px; color: var(--color-white-1000);
+  padding: calc(10px + var(--sa-t)) calc(16px + var(--sa-r)) calc(12px + var(--sa-b)) calc(16px + var(--sa-l)); background: color-mix(in srgb, var(--mw-black) 88%, transparent); }
+dialog.sv[open] { display: flex; }
+.sv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: none; }
+.sv-head h2 { margin: 0; font-size: 16px; font-weight: 400; }
+.sv-close { width: 44px; height: 44px; flex: none; color: inherit; }
+.sv-fig { flex: 1 1 auto; min-height: 0; margin: 0; display: grid; place-items: center; }
+.sv-fig img { display: block; max-width: 100%; max-height: 100%; aspect-ratio: 9 / 16; object-fit: contain; border-radius: 16px; box-shadow: 0 20px 44px -18px rgba(0, 0, 0, .6); }
+.sv-opts { flex: none; } .sv-opts:empty { display: none; }
+.sv-opts .consent-sm, .sv-opts .consent-sm b { color: var(--color-white-1000); }
+.sv-foot { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sv-foot .btn { width: auto; min-width: 0; height: 48px; padding: 0 12px; font-size: 14px; }
+dialog.wv { inset: auto 0 0; width: auto; margin: 0 6px; padding: 8px 20px calc(20px + var(--sa-b)); border-radius: 24px 24px 0 0; background: var(--glass);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: var(--dropshadow-400); }
+.wv .sv-head h2 { font-size: 16px; }
+.wv-text { display: block; quotes: none; margin-top: 4px; font-size: 18px; line-height: 1.65; font-weight: 400; overflow-wrap: anywhere; }
+.wv-foot { margin-top: 12px; font-size: 12px; color: var(--c-text-onlight); } .wv-foot:empty { display: none; }
+@media (prefers-reduced-motion: reduce) { .done-more-btn svg { transition: none; } }
 
 /* ==========================================================================
    PHONES / TABLETS (< 1024 px) — the app bar measured on moldable.studio (Chrome, 360/390/440 px): 56 px + a 1 px line,
@@ -1012,9 +1150,11 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 @media (max-width: 1023px) {
   .appbar { height: calc(var(--bar-h) + var(--sa-t)); padding-top: var(--sa-t); padding-inline: calc(16px + var(--sa-l)) calc(16px + var(--sa-r)); grid-template-columns: auto 1fr; gap: 8px; }
   .brand img { width: 104px; height: 40px; }
-  .bar-actions { position: relative; gap: 8px; }
-  .icon-btn { width: 40px; min-width: 40px; height: 40px; min-height: 40px; }
-  .eye-cta { height: 40px; min-height: 40px; padding: 0 16px; gap: 8px; font-size: 14px; font-weight: 400; line-height: 20px; }
+  /* one row: logo · theme · sound · "เริ่มลอยกระทง" (no eyes on phones); 44 px touch targets, the spacing gives way first */
+  .bar-actions { gap: 6px; }
+  .icon-btn { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
+  .eye-cta { height: 44px; min-height: 44px; padding: 0 14px; gap: 0; font-size: 14px; font-weight: 400; line-height: 20px; }
+  .eye-cta .eyes { display: none; }
   .credit-elemnt { top: calc(var(--bar-h) + 8px + var(--sa-t)); }
   #map .maplibregl-ctrl-bottom-right { top: calc(var(--bar-h) + 8px + var(--sa-t)); }
   .river-head, .cm-status-float { top: calc(var(--bar-h) + 12px + var(--sa-t)); }
@@ -1048,28 +1188,23 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 }
 /* the craft sheet is part of the workspace: no backdrop; on tablets it is a centred sheet */
 @media (min-width: 640px) and (max-width: 1023px) { .panel.craft-dock { left: 50%; right: auto; width: min(620px, calc(100vw - 32px)); margin-left: calc(min(620px, calc(100vw - 32px)) / -2); } }
-/* narrow phones: theme and sound move into one "…" control so the logo and the call to action keep their real sizes */
-@media (max-width: 419px) {
-  .bar-more { display: inline-flex; }
-  .bar-prefs { display: none; position: absolute; right: 0; top: calc(100% + 8px); z-index: 2; gap: 8px; padding: 6px; border-radius: var(--radius-full);
-    background: var(--bar-glass); -webkit-backdrop-filter: var(--bar-blur); backdrop-filter: var(--bar-blur); box-shadow: var(--bar-line), 0 12px 24px -16px rgba(0, 0, 0, .35); }
-  .bar-actions.is-open .bar-prefs { display: flex; }
-  .bar-more[aria-expanded="true"] { background: var(--bg-default-light-hover); }
-}
-/* the narrowest phones: the pill one step tighter (Morph's own < 360 px rule) */
+/* the narrowest phones: the gaps and the pill's sides give way first */
 @media (max-width: 374px) {
-  .eye-cta { gap: 6px; padding: 0 12px; font-size: 13px; }
-  .eye-cta .eyes { gap: 2px; } .eye-cta .eye { width: 20px; height: 20px; } .eye-cta .pupil { width: 8px; height: 8px; }
+  .appbar { gap: 4px; }
+  .bar-actions { gap: 4px; }
+  .eye-cta { padding: 0 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .panel.craft-dock { transition: none; } }
 
 /* ---------- phones (< 768 px): the craft options as a 2-column grid (all three tabs and both "from a picture" cards) ----------
    The sheet's body scrolls vertically; nothing scrolls sideways and no card is cut. Labels wrap; Medium (500), not bold. */
 @media (max-width: 767px) {
-  .craft-dock .tabpanel { display: block; overflow: visible; padding: 2px 2px 8px; scroll-snap-type: none; }
-  .craft-dock .options, .craft-dock .swatches, .craft-dock .clay-opt { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 0; overflow-x: visible; }
-  .craft-dock .clay-opt { margin-top: 12px; padding-left: 0; border-left: 0; align-items: center; }
-  .craft-dock .clay-opt .clay-remove { justify-self: start; }
+  /* one grid per tab: the tab panel is the grid, and the two wrappers inside it (.options/.swatches and the picture card's
+     .clay-opt, which used to start its own row) step aside with display: contents, so "ปั้นฐานจากรูป" / "ปั้นของตกแต่งจากรูป"
+     take the next cell beside the last option */
+  .craft-dock .tabpanel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; grid-auto-rows: minmax(64px, auto); gap: 12px; overflow: visible; padding: 2px 2px 8px; scroll-snap-type: none; }
+  .craft-dock .options, .craft-dock .swatches, .craft-dock .clay-opt { display: contents; }
+  .craft-dock .clay-opt .clay-remove { grid-column: 1 / -1; justify-self: end; margin: -4px 0 0; }   /* only when a picture is in: "เอาออก", under the cards
   .craft-dock .opt, .craft-dock .swatch { width: 100%; min-width: 0; height: auto; min-height: 64px; scroll-snap-align: none; }
   .craft-dock .opt { grid-template-columns: 44px minmax(0, 1fr); gap: 10px; padding: 8px 24px 8px 8px; }
   .craft-dock .opt-thumb { width: 44px; height: 44px; }
@@ -1132,8 +1267,6 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
     <img src="assets/brand/logo.svg" alt="" width="174" height="56" decoding="async">
   </a>
   <div class="bar-actions">
-    <button type="button" class="icon-btn bar-more" id="bar-more" aria-expanded="false" aria-controls="bar-prefs" aria-label="ตั้งค่าธีมและเสียง" title="ตั้งค่าธีมและเสียง"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="12.5" cy="8" r="1.4" fill="currentColor"/></svg></button>
-    <div class="bar-prefs" id="bar-prefs">
     <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="โหมดมืด" title="โหมดมืด">
       <svg class="i-moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M13.6 9.9A5.8 5.8 0 0 1 6.1 2.4a5.8 5.8 0 1 0 7.5 7.5Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <svg class="i-sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.9"/><path d="M8 1.4v1.2M8 13.4v1.2M1.4 8h1.2M13.4 8h1.2M3.3 3.3l.85.85M11.85 11.85l.85.85M3.3 12.7l.85-.85M11.85 4.15l.85-.85"/></g></svg>
@@ -1142,7 +1275,6 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path class="on" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="off" d="M16 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <span id="sound-label" class="sr-only">เปิดเสียง</span>
     </button>
-    </div>
     <button type="button" class="eye-cta" id="cta-new">
       <span>เริ่มลอยกระทง</span>
       <span class="eyes" aria-hidden="true"><span class="eye"><span class="pupil"></span></span><span class="eye"><span class="pupil"></span></span></span>
@@ -1212,7 +1344,10 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
   <!-- 02 · Make a Little Wish -->
   <!-- the wish form lives in FAH's speech bubble, beside her in the scene (placed by placeFahWish) -->
   <aside class="panel sq fah-wish" data-scene="wish" aria-labelledby="wi-title" id="fah-wish">
+    <div class="sheet-grab"><span class="sheet-handle" aria-hidden="true"></span></div>
     <h2 id="wi-title" data-i18n="wish.title">ฝากคำอธิษฐานเล็ก ๆ ไปกับสายน้ำ</h2>
+    <p class="wish-peek" id="wish-peek"></p>
+    <div class="wish-body">
     <div class="field">
       <label for="wish-text"><span data-i18n="wish.label">คำอธิษฐานของคุณ</span><small data-i18n="wish.optional">ไม่บังคับ</small></label>
       <textarea id="wish-text" maxlength="120" data-i18n-attr="placeholder:wish.placeholder" placeholder="พิมพ์คำอธิษฐาน หรือเลือกจากด้านล่าง…"></textarea>
@@ -1224,6 +1359,8 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
       <span><b data-i18n="wish.candle.title">จุดเทียนให้กระทง</b><span id="candle-sub" data-i18n="wish.candle.sub">FAH จะช่วยจุดให้เอง</span></span>
       <button type="button" class="btn btn-secondary btn-sm" id="btn-candle" aria-pressed="false" data-i18n="wish.candle.cta">จุดเทียน</button>
     </div>
+    </div>
+    <div class="wish-foot" id="wish-foot"></div>
   </aside>
   <div class="dock" data-scene="wish">
     <button type="button" class="btn btn-text btn-lg" id="btn-wish-back" data-i18n="wish.back">กลับไปแต่งกระทง</button>
@@ -1253,6 +1390,9 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
   </section>
   <div class="river-you" id="river-you" hidden></div>
   <div class="river-you river-peek" id="river-peek" role="note" hidden></div>
+  <!-- phones: a one-time hint, and the way back to your krathong once you've wandered off -->
+  <p class="river-hint" id="river-hint" data-scene="river" aria-hidden="true" hidden><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 9.500V4.250a1.250 1.250 0 0 1 2.5 0V8.500m0-.750a1.250 1.250 0 0 1 2.5 0v1m0-.250a1.250 1.250 0 0 1 2.5 0v2.750a4.5 4.5 0 0 1-4.5 4.500H9.200a4.5 4.5 0 0 1-3.6-1.800L3.3 11.900a1.2 1.2 0 0 1 1.8-1.600L7 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 4h3M16 4h-3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span data-i18n="rv.hint">ปัดเพื่อสำรวจสายน้ำ</span></p>
+  <button type="button" class="icon-btn river-home" id="river-home" data-scene="river" data-i18n-attr="aria-label:rv.home;title:rv.home" aria-label="กลับไปที่กระทงของฉัน" hidden><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="1.5" fill="currentColor"/><path d="M10 1.500v3m0 11v3M1.5 10h3m11 0h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
   <div class="dock" data-scene="river">
     <button type="button" class="btn btn-text btn-lg" id="btn-river-back" data-i18n="rv.back">กลับไปที่แผนที่</button>
     <button type="button" class="btn btn-primary btn-lg" id="btn-river-go">เลือกกระทง</button>
@@ -1260,12 +1400,13 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 
   <!-- 06 · Your Wish Is Floating -->
   <section class="done" data-scene="done" aria-labelledby="d-title">
+    <div class="done-top" id="done-top"><div class="done-id" id="done-id"></div></div>
     <p class="where" id="done-where"></p>
     <h2 id="d-title" data-i18n-html="done.title">คำอธิษฐานของคุณ<br>ออกเดินทางแล้ว <em>♡</em></h2>
-    <div class="wish-card sq"><q id="done-wish"></q><footer><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 5.500V4a2.5 2.5 0 0 1 5 0v1.500M2.5 5.500h7v5h-7z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span id="done-wish-foot"></span></footer></div>
+    <div class="wish-card sq"><q id="done-wish"></q><button type="button" class="wish-more" id="wish-more" hidden><span data-i18n="done.wish.more">อ่านต่อ</span></button><footer><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 5.500V4a2.5 2.5 0 0 1 5 0v1.500M2.5 5.500h7v5h-7z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span id="done-wish-foot"></span></footer></div>
     <p class="rel-status" id="rel-status" role="status" aria-live="polite"></p>
     <div class="story-row">
-      <figure class="story-thumb" id="story-thumb" aria-label="ตัวอย่างภาพ Story 1080 × 1920"><span class="spinner" aria-hidden="true"></span></figure>
+      <figure class="story-thumb" id="story-thumb" role="button" tabindex="0" aria-label="ตัวอย่างภาพ Story 1080 × 1920"><span class="spinner" aria-hidden="true"></span></figure>
       <div class="story-side">
         <div class="done-actions">
           <button type="button" class="btn btn-primary btn-lg" id="btn-story" data-i18n="done.story">แชร์ความสุข</button>
@@ -1282,7 +1423,29 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
         <p class="proto" id="link-note"></p>
       </div>
     </div>
+    <div class="done-stage" id="done-stage" aria-hidden="true"></div>
+    <div class="done-bar" id="done-bar">
+      <button type="button" class="btn btn-text-ov btn-md done-more-btn" id="btn-more" aria-expanded="false" aria-controls="done-more"><span data-i18n="done.more">เพิ่มเติม</span><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 8.750 7 5.250l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="done-more" id="done-more" role="group" aria-labelledby="btn-more" hidden></div>
+    </div>
   </section>
+  <!-- phones: the Story at full 9:16, and the full wish, each in its own dialog -->
+  <dialog class="sv" id="story-view" aria-labelledby="sv-title">
+    <div class="sv-head"><h2 id="sv-title" data-i18n="done.story.view">ภาพ Story ของคุณ</h2>
+      <button type="button" class="icon-btn sv-close" data-close data-i18n-attr="aria-label:cm.card.close" aria-label="ปิด"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="m4.5 4.5 9 9m0-9-9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <figure class="sv-fig" id="sv-fig"></figure>
+    <div class="sv-opts" id="sv-opts"></div>
+    <div class="sv-foot">
+      <button type="button" class="btn btn-primary btn-lg" id="sv-share" data-i18n="done.story">แชร์ความสุข</button>
+      <button type="button" class="btn btn-glass btn-lg" id="sv-dl" data-i18n="done.story.dl">บันทึกภาพ Story</button>
+    </div>
+  </dialog>
+  <dialog class="wv" id="wish-view" aria-labelledby="wv-title">
+    <div class="sv-head"><h2 id="wv-title" data-i18n="wish.label">คำอธิษฐานของคุณ</h2>
+      <button type="button" class="icon-btn sv-close" data-close data-i18n-attr="aria-label:cm.card.close" aria-label="ปิด"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="m4.5 4.5 9 9m0-9-9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <q class="wv-text" id="wv-text"></q>
+    <p class="wv-foot" id="wv-foot"></p>
+  </dialog>
 </main>
 
 <p class="demo-banner" id="demo-banner" role="note" hidden></p>
@@ -1336,7 +1499,41 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="curtain" id="curtain" aria-hidden="true"></div>
 
-<div class="loader" id="loader" role="status"><div class="loader-dots"><i></i><i></i><i></i></div><span data-i18n="loader">กำลังนวดเคลย์…</span></div>
+<div class="loader" id="loader" role="status" aria-live="polite" aria-busy="true">
+  <div class="lw-stage">
+    <svg class="lw" viewBox="0 0 160 128" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="lw-petal" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#FFF6FA"/><stop offset=".55" stop-color="#F5BDD2"/><stop offset="1" stop-color="#EB92B3"/></radialGradient>
+        <radialGradient id="lw-leaf" cx="40%" cy="30%" r="85%"><stop offset="0" stop-color="#E3F1E2"/><stop offset=".6" stop-color="#A8D1B3"/><stop offset="1" stop-color="#8DC0A0"/></radialGradient>
+        <radialGradient id="lw-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".85"/><stop offset="1" stop-color="#FFD9A0" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g class="lw-ripples"><ellipse class="lw-ripple" cx="80" cy="104" rx="40" ry="7"/><ellipse class="lw-ripple" cx="80" cy="104" rx="40" ry="7"/><ellipse class="lw-ripple" cx="80" cy="104" rx="40" ry="7"/></g>
+      <g class="lw-boat">
+        <ellipse class="lw-shadow" cx="80" cy="102" rx="38" ry="5"/>
+        <g class="lw-base"><ellipse cx="80" cy="92" rx="44" ry="11" fill="url(#lw-leaf)"/><ellipse cx="80" cy="89" rx="36" ry="7" fill="#F6F0F7" opacity=".9"/></g>
+        <path class="lw-leaf lw-l1" style="--fx:-40px;--fy:16px" d="M40 90c4-14 14-22 24-22-2 10-10 20-24 22z" fill="url(#lw-leaf)"/>
+        <path class="lw-leaf lw-l2" style="--fx:40px;--fy:16px" d="M120 90c-4-14-14-22-24-22 2 10 10 20 24 22z" fill="url(#lw-leaf)"/>
+        <path class="lw-petal lw-p1" style="--fx:-46px;--fy:-22px" d="M56 86c-6-12-2-24 8-30 6 10 4 22-8 30z" fill="url(#lw-petal)"/>
+        <path class="lw-petal lw-p2" style="--fx:46px;--fy:-22px" d="M104 86c6-12 2-24-8-30-6 10-4 22 8 30z" fill="url(#lw-petal)"/>
+        <path class="lw-petal lw-p3" style="--fx:-30px;--fy:-40px" d="M68 84c-6-14-2-28 9-34 5 12 2 26-9 34z" fill="url(#lw-petal)"/>
+        <path class="lw-petal lw-p4" style="--fx:30px;--fy:-40px" d="M92 84c6-14 2-28-9-34-5 12-2 26 9 34z" fill="url(#lw-petal)"/>
+        <g class="lw-candle"><rect x="75" y="58" width="10" height="26" rx="3.5" fill="#FFFBF2" stroke="#F3DFBC" stroke-width="1.2"/><path d="M80 58v-3" stroke="#4A3B3A" stroke-width="1.2" stroke-linecap="round"/></g>
+        <circle class="lw-glow" cx="80" cy="48" r="20" fill="url(#lw-glow)"/>
+        <path class="lw-flame" d="M80 40c3 3 4.4 5.6 4.4 7.8a4.4 4.4 0 0 1-8.8 0c0-2.2 1.4-4.8 4.4-7.8z" fill="#F7A93B"/>
+      </g>
+    </svg>
+  </div>
+  <p class="lw-brand" lang="en">Mold a Wish</p>
+  <p class="lw-msg" data-i18n="loader">กำลังปั้นความสุขเล็ก ๆ ให้คุณ…</p>
+  <div class="lw-error" id="loader-error" hidden>
+    <p data-i18n="loader.error">โหลดไม่สำเร็จ ลองอีกครั้งนะ</p>
+    <button type="button" class="btn btn-primary btn-md" id="loader-retry" data-i18n="loader.retry">ลองใหม่</button>
+  </div>
+</div>
+<script>/* the loader's safety net: if the page has not become ready (a blocked script, no network), say so and offer a retry instead of animating forever */
+(function () { var b = document.body, l = document.getElementById("loader"), e = document.getElementById("loader-error");
+  document.getElementById("loader-retry").addEventListener("click", function () { location.reload(); });
+  setTimeout(function () { if (!b.classList.contains("is-ready") && !b.classList.contains("no-webgl")) { l.classList.add("is-error"); l.setAttribute("aria-busy", "false"); e.hidden = false; } }, 25000); })();</script>
 <div class="fallback" role="alert">
   <div class="fallback-crew"><img src="assets/characters/render/min-hero.webp" alt=""><img src="assets/characters/render/pai-hero.webp" alt=""><img src="assets/characters/render/famai-hero.webp" alt=""><img src="assets/characters/render/act-hero.webp" alt=""><img src="assets/characters/render/fah-hero.webp" alt=""></div>
   <h2 data-i18n="fallback.title">เปิดฉาก 3D ไม่ได้บนเบราว์เซอร์นี้</h2>
@@ -3266,7 +3463,7 @@ const I18N = {
   th: {
     "steps.aria": "ขั้นตอน", "steps.craft": "ปั้นกระทง", "steps.wish": "อธิษฐาน", "steps.map": "เลือกสายน้ำ", "steps.float": "ลอยกระทง",
     "stage.aria": "โต๊ะปั้นกระทงสามมิติบนท่าน้ำคืนลอยกระทง มีชาว Moldable คอยช่วย ลากเพื่อหมุนดูกระทงได้", "map.aria": "แผนที่ประเทศไทยสำหรับเลือกสายน้ำ",
-    "loader": "กำลังนวดเคลย์…",
+    "loader": "กำลังปั้นความสุขเล็ก ๆ ให้คุณ…", "loader.error": "โหลดไม่สำเร็จ ลองอีกครั้งนะ", "loader.retry": "ลองใหม่",
     "craft.eyebrow": "คืนลอยกระทง · Little Wishes, Big River", "craft.head": "มาปั้นกระทงกัน", "craft.lede": "เลือก ปั้น และแต่งกระทงในแบบของคุณ",
     "craft.title": "ปั้นกระทงของคุณ", "craft.tabs": "ส่วนของกระทง",
     "craft.tab.base": "ฐาน", "craft.tab.flower": "ดอกไม้", "craft.tab.decor": "ของตกแต่ง",
@@ -3368,7 +3565,7 @@ const I18N = {
     "done.story.wish": "แสดงคำอธิษฐานในภาพ Story", "done.story.preview": "ตัวอย่างภาพ Story 1080 × 1920",
     "done.story.saved": "บันทึกภาพ Story แล้ว", "done.story.manual": "ดาวน์โหลดภาพแล้ว · เปิด Instagram บนมือถือ แตะ + แล้วเลือกภาพนี้ใน Story",
     "done.story.shared": "เปิดหน้าต่างแชร์ของเครื่องแล้ว", "done.story.fail": "สร้างภาพ Story ไม่สำเร็จ ลองอีกครั้งนะ",
-    "done.link.copied": "คัดลอกลิงก์กระทงแล้ว",
+    "done.link.copied": "คัดลอกลิงก์กระทงแล้ว", "done.more": "เพิ่มเติม", "rv.hint": "ปัดเพื่อสำรวจสายน้ำ", "rv.home": "กลับไปที่กระทงของฉัน", "rv.home.def": "กลับไปจุดเริ่มต้น", "done.wish.more": "อ่านต่อ", "done.story.view": "ภาพ Story ของคุณ", "done.story.open": "ดูภาพ Story",
     "story.head": "คำอธิษฐานของฉัน\nออกเดินทางแล้ว ♡", "story.join": "มาลอยกระทงด้วยกัน!",
     "pc.start": "ยังไม่มีกระทง? เริ่มจากตรงนี้ได้เลย", "pc.pick": "เลือกกระทง", "pc.use": "ลอยกระทงเลย", "pc.clay": "ปั้นของตกแต่งจากรูป",
     "pc.river": "ดูแม่น้ำ", "pc.river.d": "ดูกระทงที่ลอยอยู่ที่นี่คืนนี้", "pc.yours": "กระทงของคุณ",
@@ -3636,7 +3833,7 @@ function placeBubble(who) {
 const PANEL = 380;                                   // right panel + its gutters
 const VIEW = {
   craft: () => (compact() ? { dist: 56, el: 0.46, ty: 2.3, shiftX: 0, shiftY: sheet.shift } : { dist: 53, el: 0.46, ty: 2.3, shiftX: 0, shiftY: -84 }),   // phones: the krathong centred in the space above the craft sheet   // centred, lifted above the Floating Craft Dock
-  wish: () => (compact() ? { dist: 44, el: 0.5, ty: 3.5, shiftX: 0, shiftY: -Math.round(VH * 0.29) } : { dist: 38, el: 0.5, ty: 3.5, shiftX: -PANEL / 2, shiftY: 22 }),   // mobile: the krathong above FAH's wish sheet
+  wish: () => (compact() ? { dist: 44, el: 0.5, ty: 3.5, shiftX: 0, shiftY: SHEETS.wish.shift } : { dist: 38, el: 0.5, ty: 3.5, shiftX: -PANEL / 2, shiftY: 22 }),   // mobile: the krathong above FAH's wish sheet
 };
 /* THE CAST — a small rotating company of Moldable helpers, not two fixed characters.
    Each crafting tab has its own helper at the table; the others settle at the back of the pier.
@@ -3724,7 +3921,7 @@ function castFah(on, dur = 1.0) {
 /** The page opens straight into crafting: the krathong assembles itself on the table and MIN says hello. */
 function intro() {
   setScene("craft"); Object.assign(cam, VIEW.craft()); if (!still()) cam.dist += 10; applyCamera();
-  if (compact()) setSheet("peek", { instant: true });                                   // phones: the craft sheet opens at its peek
+  if (compact()) setSheet("craft", "peek", { instant: true });                          // phones: the craft sheet opens at its peek
   body.classList.remove("is-loading"); body.classList.add("is-ready");
   gsap.to(cam, { dist: VIEW.craft().dist, duration: D(1.5), ease: "power3.out", onUpdate: applyCamera });
   built3d.base = null; syncKrathong(state); syncOptionState();
@@ -3747,6 +3944,7 @@ function toWish() {
   CRAFTERS.forEach((k, i) => { const c = crew[k]; moveChar(c, CAST[k].back, 0.75); hold(k, false); gsap.killTweensOf(c, "show"); gsap.to(c, { show: 0, duration: D(0.4), delay: D(0.45 + i * 0.06), ease: "power2.in", onStart: () => hush1(k) }); });
   castFah(true, 1.3);                                                                     // …and FAH floats in
   initMap();                                          // the river is prepared in advance, underneath the workshop
+  if (compact()) { setSheet("wish", "half", { instant: true }); after(1250, () => setSheet("wish", SHEETS.wish.snap)); }   // phones: FAH's sheet at half, the view settles above it
   after(1900, () => say("fah", "say.wish", 3200));
   unlock(1100);
 }
@@ -3826,8 +4024,10 @@ let floatFollow = null;                               // while set, the krathong
 const ripEl = $("#ripples"), ripPos = { x: 0, y: 0 };
 const moveRipples = () => { ripEl.style.left = ripPos.x + "px"; ripEl.style.top = ripPos.y + "px"; };
 function ripples(on, x, y) { if (on) { ripPos.x = x; ripPos.y = y; moveRipples(); } ripEl.classList.toggle("is-on", !!on); }
-const lensSpot = () => (compact() ? { x: Math.round(VW / 2), y: 200 } : { x: Math.round(VW * 0.27), y: Math.round(VH * 0.46) });   // mobile: the krathong at the top, the words below
-const pinSpot = () => (compact() ? { x: Math.round(VW / 2), y: 330 } : { x: Math.round(VW * 0.27), y: Math.round(VH * 0.82) });
+/** Phones: the free band between the success words and the action bar, where the krathong and the crew gather. */
+function doneStage() { if (!compact()) return null; const r = $("#done-stage").getBoundingClientRect(); return r.height > 40 ? r : null; }
+const lensSpot = () => { if (!compact()) return { x: Math.round(VW * 0.27), y: Math.round(VH * 0.46) }; const r = doneStage(); return { x: Math.round(VW / 2), y: r ? Math.round(r.top + r.height / 2) : 200 }; };
+const pinSpot = () => { if (!compact()) return { x: Math.round(VW * 0.27), y: Math.round(VH * 0.82) }; const r = doneStage(), L = lensSpot(); return { x: L.x, y: r ? Math.round(Math.min(r.bottom - 6, L.y + 132)) : 330 }; };
 function toFloat() {
   const p = PLACES.find((q) => q.id === state.place);
   if (!p || !map || mapState !== "ready" || lock()) return;
@@ -3871,8 +4071,8 @@ function layoutDone(animate) {
   const L = lensSpot(), pin = pinSpot(), lens = $("#lens"), tail = $("#lens-tail"), d = animate ? D(0.7) : 0;
   lens.style.left = L.x + "px"; lens.style.top = L.y + "px";
   tail.style.left = L.x - 1 + "px"; tail.style.top = L.y + 220 + "px"; tail.style.height = Math.max(0, pin.y - 34 - (L.y + 220)) + "px";
-  gsap.to(lens, { opacity: 1, scale: 1, duration: D(animate ? 0.6 : 0), ease: "back.out(1.5)" }); gsap.to(tail, { opacity: 1, duration: d, delay: animate ? D(0.3) : 0 });
-  const k = compact() ? 0.5 : 1;                                                       // mobile: the same picture, half size
+  const st = doneStage(), k = compact() ? (st ? clamp(st.height / 330, 0.36, 0.5) : 0.5) : 1;   // mobile: the same picture, half size (less on short screens)
+  gsap.to(lens, { opacity: 1, scale: compact() ? k / 0.5 : 1, duration: D(animate ? 0.6 : 0), ease: "back.out(1.5)" }); gsap.to(tail, { opacity: 1, duration: d, delay: animate ? D(0.3) : 0 });
   gsap.killTweensOf(kr); gsap.to(kr, { sx: L.x, sy: L.y + 6, px: 300 * k, bob: 1, tiltX: 0, duration: d, ease: "power3.out" });
   const seats = { min: [-205, 150, 150], pai: [176, -176, 92], famai: [-196, -150, 84], act: [222, 92, 112], fah: [150, 214, 82] };   // the whole company gathers
   Object.entries(seats).forEach(([id, [dx0, dy0, px0]], i) => {
@@ -4012,7 +4212,7 @@ function renderChips() {
   const v = $("#wish-text").value.trim();
   $("#wish-chips").innerHTML = WISHES.map((k) => `<button type="button" class="chip" data-wish="${k}" aria-pressed="${v === t(k)}">${esc(t(k))}</button>`).join("");
 }
-function onWishInput() { const el = $("#wish-text"); $("#wish-count").textContent = el.value.length + "/120"; const v = el.value.trim(); $$("#wish-chips .chip").forEach((c) => c.setAttribute("aria-pressed", String(v === t(c.dataset.wish)))); }
+function onWishInput() { const el = $("#wish-text"); $("#wish-count").textContent = el.value.length + "/120"; const pk = $("#wish-peek"); if (pk) pk.textContent = el.value.trim(); const v = el.value.trim(); $$("#wish-chips .chip").forEach((c) => c.setAttribute("aria-pressed", String(v === t(c.dataset.wish)))); }
 function renderCandle() {
   const lit = state.candle, btn = $("#btn-candle");
   $("#candle-row").classList.toggle("is-lit", lit);
@@ -4299,89 +4499,102 @@ function viewMine() {
   doneToMap();
   whenReady(() => state.scene === "map" && !state.busy && mapState === "ready", () => toRiver());
 }
-/* ---------- the craft sheet (phones/tablets): peek · half · full, dragged by its top or by its body ----------
-   Pointer events for a mouse, touch events for fingers (so a vertical swipe on the options can move the sheet while a
-   horizontal one still scrolls the cards). The 3D view eases so the krathong stays centred in the space above the sheet. */
-const sheet = { snap: "peek", h: 0, shift: -60, drag: null };
+/* ---------- bottom sheets on phones/tablets: the craft sheet and FAH's wish sheet share one controller ----------
+   peek · half · full, dragged by the top or by the body at its scroll edges (touch events for fingers, pointer events for a
+   mouse), so a vertical swipe on the content scrolls it first. The 3D view eases so the krathong (and, for the wish, FAH
+   above it) stays centred in the space above the sheet — nothing is rebuilt, the camera only slides. */
 const SNAPS = ["peek", "half", "full"];
-function sheetSnaps() {
-  const el = $("#craft-dock"), bar = $(".appbar").getBoundingClientRect().height;
-  const sab = parseFloat(getComputedStyle(el).paddingBottom) || 10, grab = $(".sheet-grab", el), top = $(".dock-top", el), foot = $(".dock-foot", el);
-  const peek = Math.round(grab.offsetHeight + top.offsetHeight + 10 + sab + 6);
-  const half = Math.round(Math.max(peek + 120, Math.min(VH * 0.5, grab.offsetHeight + top.offsetHeight + 80 + foot.offsetHeight + 30 + sab)));
-  const full = Math.round(Math.max(half + 60, VH - bar - 12));
-  return { peek, half, full };
+const SHEETS = {
+  craft: { sel: "#craft-dock", grab: ".sheet-grab, .dock-top", body: ".dock-body", snap: "peek", h: 0, shift: -60, drag: null, lift: 8 },
+  wish: { sel: "#fah-wish", grab: ".sheet-grab, h2, .wish-peek", body: ".wish-body", snap: "half", h: 0, shift: -200, drag: null, lift: 30 },
+};
+const sheet = SHEETS.craft;                                                          // VIEW.craft reads its shift
+function sheetSnaps(key) {
+  const el = $(SHEETS[key].sel), bar = $(".appbar").getBoundingClientRect().height, sab = parseFloat(getComputedStyle(el).paddingBottom) || 10, grab = $(".sheet-grab", el);
+  if (key === "craft") {
+    const top = $(".dock-top", el), foot = $(".dock-foot", el);
+    const peek = Math.round(grab.offsetHeight + top.offsetHeight + 10 + sab + 6);
+    const half = Math.round(Math.max(peek + 120, Math.min(VH * 0.5, grab.offsetHeight + top.offsetHeight + 80 + foot.offsetHeight + 30 + sab)));
+    return { peek, half, full: Math.round(Math.max(half + 60, VH - bar - 12)) };
+  }
+  const h2 = $("h2", el), peek = Math.round(clamp(grab.offsetHeight + h2.offsetHeight + ($("#wish-text").value.trim() ? 26 : 0) + 8 + sab, 96, 150));
+  const half = Math.round(Math.max(peek + 180, VH * 0.5));
+  return { peek, half, full: Math.round(Math.max(half + 60, VH - bar - 12)) };
 }
-function setSheetHeight(h, animate) {
-  const el = $("#craft-dock"); sheet.h = h;
-  el.classList.toggle("is-dragging", !animate); el.style.setProperty("--sheet-h", h + "px"); root.style.setProperty("--sheet-h", h + "px");
+function setSheetHeight(key, h, animate) {
+  const S = SHEETS[key], el = $(S.sel); S.h = h;
+  el.classList.toggle("is-dragging", !animate); el.style.setProperty("--sheet-h", h + "px");
+  if (state.scene === key) root.style.setProperty("--sheet-h", h + "px");
 }
-function setSheet(snap, { instant = false } = {}) {
+function setSheet(key, snap, { instant = false } = {}) {
   if (!compact()) return;
-  const el = $("#craft-dock"), S = sheetSnaps(); sheet.snap = snap; el.dataset.snap = snap;
-  setSheetHeight(S[snap], !instant); placeTabInd(true);
-  // keep the krathong in the middle of what is left above the sheet (a small, smooth reframe; nothing is rebuilt)
-  if (state.scene === "craft") {
-    const bar = $(".appbar").getBoundingClientRect().height, target = (bar + VH - Math.min(S[snap], S.half)) / 2 + 8;
+  const S = SHEETS[key], el = $(S.sel), H = sheetSnaps(key); S.snap = snap; el.dataset.snap = snap;
+  setSheetHeight(key, H[snap], !instant); if (key === "craft") placeTabInd(true);
+  if (state.scene === key) {
+    const bar = $(".appbar").getBoundingClientRect().height, target = (bar + VH - Math.min(H[snap], H.half)) / 2 + S.lift;
     const cur = screenOf(_p.set(0, 1.0, 0)).y, shift = Math.round(cam.shiftY + (target - cur));
-    sheet.shift = shift; if (instant || still()) { cam.shiftY = shift; applyCamera(); } else gsap.to(cam, { shiftY: shift, duration: D(0.45), ease: "power2.out", onUpdate: applyCamera });
+    S.shift = shift; if (instant || still()) { cam.shiftY = shift; applyCamera(); } else gsap.to(cam, { shiftY: shift, duration: D(0.45), ease: "power2.out", onUpdate: applyCamera });
   }
 }
-function bindSheet() {
-  const el = $("#craft-dock"), body2 = $(".dock-body", el);
+function bindSheet(key) {
+  const S = SHEETS[key], el = $(S.sel), body2 = $(S.body, el);
   const start = (x, y, target) => {
-    if (!compact() || state.scene !== "craft" || state.busy) return false;
-    const onGrab = !!target.closest(".sheet-grab, .dock-top"), inBody = !!target.closest(".dock-body");
-    sheet.drag = { x0: x, y0: y, t0: performance.now(), h0: sheet.h, onGrab, inBody, mode: "" , moved: false };
+    if (!compact() || state.scene !== key || state.busy || target.closest("textarea, input")) return false;
+    S.drag = { x0: x, y0: y, t0: performance.now(), h0: S.h, onGrab: !!target.closest(S.grab), inBody: !!target.closest(S.body), mode: "", moved: false };
     return true;
   };
   const move = (x, y) => {
-    const d = sheet.drag; if (!d) return false;
+    const d = S.drag; if (!d) return false;
     const dx = x - d.x0, dy = y - d.y0;
     if (!d.mode) {
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return false;
       const vertical = Math.abs(dy) > Math.abs(dx) * 1.2;
-      // the options scroll first: the body hands a vertical swipe to the sheet only at its scroll edges
+      // the content scrolls first: the body hands a vertical swipe to the sheet only at its scroll edges
       // (down at the top → collapse; up at the bottom → expand, unless already full)
       const atTop = body2.scrollTop <= 0, atEnd = body2.scrollTop + body2.clientHeight >= body2.scrollHeight - 1;
-      const ok = vertical && (d.onGrab || (d.inBody && ((dy > 0 && atTop) || (dy < 0 && atEnd && sheet.snap !== "full"))));
-      d.mode = ok ? "sheet" : "none";
+      d.mode = vertical && (d.onGrab || (d.inBody && ((dy > 0 && atTop) || (dy < 0 && atEnd && S.snap !== "full")))) ? "sheet" : "none";
     }
     if (d.mode !== "sheet") return false;
-    const S = sheetSnaps(); d.moved = true;
-    setSheetHeight(clamp(d.h0 - dy, S.peek - 24, S.full), false); return true;
+    const H = sheetSnaps(key); d.moved = true;
+    setSheetHeight(key, clamp(d.h0 - dy, H.peek - 24, H.full), false); return true;
   };
   const end = (y) => {
-    const d = sheet.drag; sheet.drag = null; if (!d || d.mode !== "sheet") return;
-    const S = sheetSnaps(), v = (y - d.y0) / Math.max(1, performance.now() - d.t0), i = SNAPS.indexOf(sheet.snap);
-    let next;
-    if (Math.abs(v) > 0.45) next = SNAPS[clamp(i + (v < 0 ? 1 : -1), 0, 2)];                     // a flick: one step that way
-    else next = SNAPS.reduce((a, b) => (Math.abs(S[b] - sheet.h) < Math.abs(S[a] - sheet.h) ? b : a));   // otherwise the nearest stop
-    setSheet(next);
+    const d = S.drag; S.drag = null; if (!d || d.mode !== "sheet") return;
+    const H = sheetSnaps(key), v = (y - d.y0) / Math.max(1, performance.now() - d.t0), i = SNAPS.indexOf(S.snap);
+    const next = Math.abs(v) > 0.45 ? SNAPS[clamp(i + (v < 0 ? 1 : -1), 0, 2)]                  // a flick: one step that way
+      : SNAPS.reduce((a, b) => (Math.abs(H[b] - S.h) < Math.abs(H[a] - S.h) ? b : a));          // otherwise the nearest stop
+    setSheet(key, next);
     if (d.moved) { const stop = (e) => { e.stopPropagation(); e.preventDefault(); }; el.addEventListener("click", stop, { capture: true, once: true }); setTimeout(() => el.removeEventListener("click", stop, { capture: true }), 0); }
   };
   el.addEventListener("touchstart", (e) => { if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY, e.target); }, { passive: true });
-  el.addEventListener("touchmove", (e) => { if (sheet.drag && move(e.touches[0].clientX, e.touches[0].clientY)) e.preventDefault(); }, { passive: false });
+  el.addEventListener("touchmove", (e) => { if (S.drag && move(e.touches[0].clientX, e.touches[0].clientY)) e.preventDefault(); }, { passive: false });
   el.addEventListener("touchend", (e) => end(e.changedTouches[0].clientY));
-  el.addEventListener("touchcancel", () => { sheet.drag = null; setSheet(sheet.snap); });
-  el.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && e.button === 0 && start(e.clientX, e.clientY, e.target) && sheet.drag.onGrab) el.setPointerCapture(e.pointerId); });
-  el.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse" && sheet.drag) move(e.clientX, e.clientY); });
+  el.addEventListener("touchcancel", () => { S.drag = null; setSheet(key, S.snap); });
+  el.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && e.button === 0 && start(e.clientX, e.clientY, e.target) && S.drag.onGrab) el.setPointerCapture(e.pointerId); });
+  el.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse" && S.drag) move(e.clientX, e.clientY); });
   el.addEventListener("pointerup", (e) => { if (e.pointerType === "mouse") end(e.clientY); });
-  // tapping the handle area steps the sheet up (and back to peek from full) — the keyboard way in too
-  $(".sheet-grab", el).addEventListener("click", () => { if (compact() && !sheet.drag) setSheet(SNAPS[(SNAPS.indexOf(sheet.snap) + 1) % 3]); });
+  // tapping the handle steps the sheet up (and from full back to peek)
+  $(".sheet-grab", el).addEventListener("click", () => { if (compact() && !S.drag) setSheet(key, SNAPS[(SNAPS.indexOf(S.snap) + 1) % 3]); });
+}
+/** The wish actions live in the wish sheet's footer on phones, in the dock under FAH's bubble on desktop (same buttons, same handlers). */
+function placeWishNav() {
+  const to = compact() ? $("#wish-foot") : $('.dock[data-scene~="wish"]'), back = $("#btn-wish-back"), go = $("#cta-journey");
+  if (back.parentElement !== to) to.append(back, go);
 }
 function bindMobile() {
-  bindSheet();
-  // narrow phones: theme and sound in one small "…" popover (same buttons, same handlers)
-  const more = $("#bar-more"), acts = $(".bar-actions");
-  const setMore = (on) => { acts.classList.toggle("is-open", on); more.setAttribute("aria-expanded", String(on)); };
-  more.addEventListener("click", (e) => { e.stopPropagation(); setMore(!acts.classList.contains("is-open")); });
-  document.addEventListener("click", (e) => { if (!e.target.closest(".bar-actions")) setMore(false); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && acts.classList.contains("is-open")) { setMore(false); more.focus(); } });
+  bindSheet("craft"); bindSheet("wish"); placeWishNav(); bindDoneMobile(); placeDone();
+
   // the on-screen keyboard: its height as --kb, so FAH's wish sheet rides above it and the actions stay reachable
   const vv = window.visualViewport;
   if (vv) {
-    const kb = () => { const h = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)); root.style.setProperty("--kb", h + "px"); body.classList.toggle("kb-open", h > 80); };
+    let before = null;                                                               // the wish sheet's stop before the keyboard came up
+    const kb = () => {
+      const h = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)), open = h > 80, was = body.classList.contains("kb-open");
+      root.style.setProperty("--kb", h + "px"); body.classList.toggle("kb-open", open);
+      if (state.scene !== "wish" || !compact() || open === was) return;
+      if (open) { before = SHEETS.wish.snap; if (before === "peek") setSheet("wish", "half"); }         // typing needs the field in view
+      else if (before) { setSheet("wish", before); before = null; }                                     // keyboard down: back where it was
+    };
     vv.addEventListener("resize", kb); vv.addEventListener("scroll", kb);
   }
   // the place sheet: swipe down to tuck it away (the place stays chosen), swipe up or tap its top to bring it back
@@ -4397,7 +4610,37 @@ function renderDone() {
   const p = PLACES.find((q) => q.id === state.place);
   $("#done-where").innerHTML = p ? `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 11s3.5-3.3 3.5-6A3.5 3.5 0 0 0 2.5 5c0 2.7 3.5 6 3.5 6z" fill="currentColor"/></svg>${esc(placeLine(p.id))}` : "";
   $("#done-wish").textContent = state.wish || t("done.nowish");
+  $(".done .wish-card").classList.toggle("is-empty", !state.wish); fitWish();          // phones: no wish → no wish block
   $("#story-wish-row").hidden = !state.wish; $("#story-wish").checked = !!state.wish;   // the wish is public anyway: in the Story by default
+}
+/* ---------- the release success on phones: one screen — the words and the Story thumbnail on top, the krathong in the
+   middle, the actions at the bottom. Same elements and handlers as desktop, regrouped; desktop gets them back in place. ---------- */
+function placeDone() {
+  const done = $(".done"), m = compact(); if (m === done.classList.contains("is-m")) return;
+  const row = $(".story-row", done), side = $(".story-side", done), where = $("#done-where"), h2 = $("#d-title"), wish = $(".wish-card", done), status = $("#rel-status"),
+    thumb = $("#story-thumb"), actions = $(".done-actions", done), consent = $("#story-wish-row"), links = $(".done-links", done), note = $("#link-note");
+  done.classList.toggle("is-m", m);
+  if (m) { $("#done-id").append(h2, where, status, wish); $("#done-top").append(thumb); $("#done-bar").prepend(actions); $("#done-more").append(links, note); $("#sv-opts").append(consent); }
+  else { closeDoneMore(); ["#story-view", "#wish-view"].forEach((q) => { const d = $(q); if (d.open) d.close(); }); row.before(where, h2, wish, status); row.prepend(thumb); side.append(actions, consent, links, note); }
+  fitWish();
+}
+/** The wish shows two lines on phones; when it runs longer, the card opens the whole wording in a dialog. */
+function fitWish() { const q = $("#done-wish"), b = $("#wish-more"); b.hidden = !(compact() && state.wish && q.scrollHeight > q.clientHeight + 1); }
+function openWishView() { $("#wv-text").textContent = state.wish; $("#wv-foot").textContent = $("#done-wish-foot").textContent; $("#wish-view").showModal(); }
+function syncStoryView() { const f = $("#sv-fig"); if (f) f.innerHTML = story.url ? `<img src="${story.url}" alt="${esc(t("done.story.preview"))}">` : '<span class="spinner" aria-hidden="true"></span>'; }
+function openStoryView() { const d = $("#story-view"); syncStoryView(); if (!d.open) d.showModal(); if (!story.url) renderStoryPreview(); }
+function closeDoneMore(focus) { const p = $("#done-more"), b = $("#btn-more"); if (p.hidden) return; p.hidden = true; b.setAttribute("aria-expanded", "false"); if (focus) b.focus(); }
+function bindDoneMobile() {
+  const more = $("#done-more"), btn = $("#btn-more");
+  btn.addEventListener("click", () => { if (!more.hidden) { closeDoneMore(); return; } more.hidden = false; btn.setAttribute("aria-expanded", "true"); const f = $("button:not(:disabled)", more); if (f) f.focus(); });
+  more.addEventListener("click", (e) => { if (e.target.closest("button")) setTimeout(() => closeDoneMore(), 0); });   // the action runs, then the menu folds
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !more.hidden) closeDoneMore(true); });
+  document.addEventListener("pointerdown", (e) => { if (!more.hidden && !e.target.closest("#done-bar")) closeDoneMore(); });
+  $("#wish-more").addEventListener("click", openWishView);
+  $("#sv-share").addEventListener("click", shareStory); $("#sv-dl").addEventListener("click", downloadStory);
+  ["#story-view", "#wish-view"].forEach((q) => { const d = $(q);
+    d.addEventListener("click", (e) => { if (e.target.closest("[data-close]") || (e.target === d && q === "#wish-view")) d.close(); }); });
+  $("#story-thumb").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.currentTarget.click(); } });
 }
 /* ==========================================================================
    12 · LANGUAGE · BOOT · FRAME LOOP
@@ -4502,7 +4745,7 @@ function bindChrome() {
   $("#story-wish").addEventListener("change", renderStoryPreview);
   $("#btn-explore").addEventListener("click", openCommunity);
   $("#btn-mine").addEventListener("click", viewMine);
-  $("#story-thumb").addEventListener("click", (e) => { const f = e.currentTarget; if (f.querySelector("img")) f.classList.toggle("is-zoom"); });
+  $("#story-thumb").addEventListener("click", (e) => { if (compact()) { openStoryView(); return; } const f = e.currentTarget; if (f.querySelector("img")) f.classList.toggle("is-zoom"); });
   bindMobile();
   $("#btn-link").addEventListener("click", copyLink);
   $("#cta-explore-craft").addEventListener("click", exploreToCraft);
@@ -4513,7 +4756,7 @@ function bindChrome() {
     resizeStage();
     if (state.busy) return;
     if (state.scene === "craft" || state.scene === "wish") { Object.assign(cam, VIEW[state.scene]()); applyCamera(); }
-    if (compact()) setSheet(sheet.snap, { instant: true });
+    placeWishNav(); placeDone(); fitWish(); if (compact() && SHEETS[state.scene]) setSheet(state.scene, SHEETS[state.scene].snap, { instant: true });
     if (state.scene === "map") { const P = previewSpot(); Object.assign(kr, { sx: P.x, sy: P.y }); if (crew.act) Object.assign(crew.act, { sx: P.x + 128, sy: P.y - 78 }); }
     if (state.scene === "done") layoutDone(false);
   });
@@ -4563,7 +4806,7 @@ function frame(now) {
   aimGazes(now);
   for (const id in crew) updateChar(crew[id], T, dt);
   updateKrathong(T, dt);
-  updateEnv(T, dt); updateRiver(T, dt); placeRiverLabel();
+  updateEnv(T, dt); updateRiver(T, dt); riverNavTick(dt); placeRiverLabel();
   for (const id in held) { const g = held[id]; if (g.visible) { g.rotation.z = Math.sin(T * 1.6) * 0.18; g.position.y = -0.5 + Math.sin(T * 2.1) * 0.06; } }
   if (trail.on && now - trail.last > 42 && !still()) { trail.last = now; spark(kr.sx + (Math.random() - 0.5) * kr.px * 0.5, kr.sy + kr.px * 0.18, 46); }
   for (const who in bubbles) placeBubble(who);
@@ -4935,6 +5178,7 @@ function renderRelease() {
   if (foot) {
     const off = cm.mode === "off" && !!state.wish;
     foot.textContent = off ? t("done.private") : release.wishStatus === "approved" ? t("rel.wish.public") : release.wishStatus === "rejected" ? t("rel.wish.rejected") : "";
+    foot.dataset.kind = off ? "private" : release.wishStatus === "approved" ? "public" : release.wishStatus === "rejected" ? "rejected" : "";
     const lock = foot.parentElement.querySelector("svg"); if (lock) lock.hidden = !off;
   }
   renderLink();
@@ -5122,7 +5366,7 @@ async function storyImage() {
 async function renderStoryPreview() {
   const fig = $("#story-thumb"); fig.classList.add("is-wait");
   try { await storyImage(); fig.innerHTML = `<img src="${story.url}" alt="">`; } catch (e) { fig.innerHTML = ""; }
-  fig.classList.remove("is-wait");
+  fig.classList.remove("is-wait"); syncStoryView();
 }
 const storyFile = (b) => new File([b], "moldable-loykrathong-story.png", { type: "image/png" });
 function download(b) { const a = document.createElement("a"); a.href = story.url || URL.createObjectURL(b); a.download = "moldable-loykrathong-story.png"; document.body.appendChild(a); a.click(); a.remove(); }
@@ -5650,7 +5894,7 @@ function toRiver() {
       setScene("river"); renderRiverUi(p, list, !!mineD);
     })
     .to("#curtain", { opacity: 0, duration: D(0.6), ease: "sine.out" }, "+=0.06")
-    .add(() => { gsap.to(cam, { ...riverUi.view, duration: D(1.8), ease: "power3.out", onUpdate: applyCamera }); unlock(); $("#btn-river-back").focus({ preventScroll: true }); });
+    .add(() => { riverNavReset(); gsap.to(cam, { ...riverUi.view, duration: D(1.8), ease: "power3.out", onUpdate: applyCamera, onComplete: riverNavStart }); unlock(); $("#btn-river-back").focus({ preventScroll: true }); });
 }
 function renderRiverUi(p, list, hasMine) {
   $("#river-title").textContent = t("rv.title", { place: t("place." + p.id) });
@@ -5671,7 +5915,7 @@ function riverToMap(then) {
   if (state.busy || state.scene !== "river") return;
   lock(); clearTimers();
   curtain(() => {
-    riverWorld.visible = false; cssv.bg = 0; setBg(); hidePeek();
+    riverNavReset(); riverWorld.visible = false; cssv.bg = 0; setBg(); hidePeek();
     if (riverUi.prevCam) { Object.assign(cam, riverUi.prevCam); applyCamera(); }
     krathong.visible = riverUi.hold;
     const P = previewSpot(), act = ensure("act");
@@ -5734,23 +5978,105 @@ function bindRiverPeek() {
     const hit = ray.intersectObjects(river.boats.map((B) => B.g), true)[0]; if (!hit) return null;
     for (let o = hit.object; o; o = o.parent) { const B = river.boats.find((b) => b.g === o); if (B) return B; } return null; };
   stageEl.addEventListener("pointermove", (e) => {
-    if (state.scene !== "river" || state.busy) return; last = e;
+    if (state.scene !== "river" || state.busy || e.pointerType === "touch") return; last = e;
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; const B = boatAt(last); stageEl.classList.toggle("is-pickable", !!(B && B.rec && B.rec.wish)); if (!peek.pinned) { if (B) showPeek(B, false); else hidePeek(); } });
   });
   stageEl.addEventListener("pointerdown", (e) => { down = state.scene === "river" ? [e.clientX, e.clientY] : null; });
   stageEl.addEventListener("pointerup", (e) => {
-    if (state.scene !== "river" || state.busy || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+    if (state.scene !== "river" || state.busy || !down || nav.gesture || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > (e.pointerType === "touch" ? 10 : 5)) return;
     const B = boatAt(e); if (B) showPeek(B, true); else hidePeek();
   });
   ["#river-you", "#river-peek"].forEach((sel) => $(sel).addEventListener("click", (e) => { const el = e.currentTarget; if (el.classList.contains("is-long")) el.classList.toggle("is-open"); }));
   $("#river-you").addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.currentTarget.classList.contains("is-long")) { e.preventDefault(); e.currentTarget.classList.toggle("is-open"); } });
+}
+/* ---------- exploring the river with a finger (phones only) ----------
+   The river runs left ↔ right across this world (x, downstream to the right); its lanes go back into the picture (−z).
+   One finger grabs the water: sideways travels along the river, up/down glides forward over it toward the far bank or
+   back toward your krathong. Two fingers pinch the distance. The camera keeps its height and angle (never under the
+   water), eases toward where the finger put it (frame-rate-independent damping), coasts a little after release, and
+   stays inside the scene that was built: x ±24, from your krathong to the middle of the far lanes. Nothing in the river
+   is touched — the krathongs keep drifting on their own. */
+const NAV = { x: 24, zf: -11, zb: 3.5, zoomIn: 0.62, zoomOut: 1.3 };
+const nav = { on: false, x: 0, z: 0, zoom: 1, tx: 0, tz: 0, tzoom: 1, vx: 0, vz: 0, ptrs: new Map(), last: null, pinch: 0, pinchZoom: 1, gesture: false, moved: false, t0: 0 };
+function riverNavReset() { Object.assign(nav, { on: false, x: 0, z: 0, zoom: 1, tx: 0, tz: 0, tzoom: 1, vx: 0, vz: 0, pinch: 0, gesture: false, moved: false }); nav.ptrs.clear(); $("#river-home").hidden = true; $("#river-hint").hidden = true; }
+function riverNavStart() {
+  if (state.scene !== "river" || !compact()) return; nav.on = true;
+  let seen = false; try { seen = localStorage.getItem("lk-river-hint") === "1"; } catch (e) {}
+  const h = $("#river-hint"); if (!seen) { h.hidden = false; requestAnimationFrame(() => h.classList.add("is-on")); }
+}
+function riverHintDone() {
+  const h = $("#river-hint"); if (h.hidden) return; h.classList.remove("is-on"); setTimeout(() => { h.hidden = true; }, 300);
+  try { localStorage.setItem("lk-river-hint", "1"); } catch (e) {}
+}
+/** World units under one screen pixel at the camera's target (what a finger's move means on the water). */
+function navPxWorld() { return (2 * cam.dist * (VW / VH < 1 ? Math.max(1, (1.6 / (VW / VH)) * 0.45) : 1) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / VH; }
+function navClamp() {
+  const tx = clamp(nav.tx, -NAV.x, NAV.x), tz = clamp(nav.tz, NAV.zf, NAV.zb);
+  if (tx !== nav.tx) nav.vx = 0; if (tz !== nav.tz) nav.vz = 0; nav.tx = tx; nav.tz = tz; nav.tzoom = clamp(nav.tzoom, NAV.zoomIn, NAV.zoomOut);
+}
+/** Each frame: momentum, then the camera eases toward its target. Called from the frame loop. */
+function riverNavTick(dt) {
+  if (!nav.on || state.scene !== "river") return;
+  if (!nav.ptrs.size && (nav.vx || nav.vz)) {
+    nav.tx += nav.vx * dt; nav.tz += nav.vz * dt; const f = Math.exp(-3.2 * dt); nav.vx *= f; nav.vz *= f;
+    if (Math.abs(nav.vx) < 0.05) nav.vx = 0; if (Math.abs(nav.vz) < 0.05) nav.vz = 0; navClamp();
+  }
+  const k = still() ? 1 : 1 - Math.exp(-9 * dt), kz = still() ? 1 : 1 - Math.exp(-7 * dt);
+  const dx = nav.tx - nav.x, dz = nav.tz - nav.z, dm = nav.tzoom - nav.zoom;
+  if (Math.abs(dx) + Math.abs(dz) + Math.abs(dm) < 1e-4) return;
+  nav.x += dx * k; nav.z += dz * k; nav.zoom += dm * kz;
+  const V = riverUi.view;
+  cam.tx = V.tx + nav.x; cam.tz = V.tz + nav.z; cam.dist = V.dist * nav.zoom;
+  cam.az = V.az - (nav.x / NAV.x) * 0.1;                                               // a slight turn toward the middle as you travel: depth, not a spin
+  applyCamera();
+  const away = Math.abs(nav.tx) > 5 || Math.abs(nav.tz) > 3 || Math.abs(nav.tzoom - 1) > 0.2, b = $("#river-home");
+  if (b.hidden === away) { b.hidden = !away; if (away) b.setAttribute("aria-label", t(river.mine ? "rv.home" : "rv.home.def")); }
+}
+function riverNavHome() { nav.vx = nav.vz = 0; nav.tx = 0; nav.tz = 0; nav.tzoom = 1; }        // the same easing carries it back
+function bindRiverNav() {
+  const live = () => nav.on && compact() && state.scene === "river" && !state.busy;
+  stageEl.addEventListener("pointerdown", (e) => {
+    if (!live() || e.pointerType === "mouse") return;
+    if (!nav.ptrs.size) { nav.gesture = false; nav.moved = false; }
+    gsap.killTweensOf(cam); nav.vx = nav.vz = 0;
+    nav.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY });
+    if (nav.ptrs.size === 2) { const [a, b] = [...nav.ptrs.values()]; nav.pinch = Math.hypot(a.x - b.x, a.y - b.y) || 1; nav.pinchZoom = nav.tzoom; nav.gesture = true; }
+    nav.last = { t: performance.now(), x: e.clientX, y: e.clientY };
+  });
+  stageEl.addEventListener("pointermove", (e) => {
+    const p = nav.ptrs.get(e.pointerId); if (!p || !live()) return;
+    const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    if (nav.ptrs.size >= 2) {                                                          // pinch: apart → closer
+      const [a, b] = [...nav.ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      nav.tzoom = nav.pinchZoom * (nav.pinch / d); navClamp(); return;
+    }
+    if (!nav.moved && Math.hypot(e.clientX - p.x0, e.clientY - p.y0) < 10) return;     // under 10 px it may still be a tap
+    if (!nav.moved) { nav.moved = true; nav.gesture = true; riverHintDone(); hidePeek(); }
+    const w = navPxWorld();
+    nav.tx -= dx * w; nav.tz -= dy * w * 1.6; navClamp();                              // the water follows the finger (depth is foreshortened)
+    const now = performance.now(), dtm = Math.max(16, now - nav.last.t) / 1000;
+    const ivx = (-(e.clientX - nav.last.x) * w) / dtm, ivz = (-(e.clientY - nav.last.y) * w * 1.6) / dtm;
+    nav.vx = nav.vx * 0.6 + ivx * 0.4; nav.vz = nav.vz * 0.6 + ivz * 0.4; nav.last = { t: now, x: e.clientX, y: e.clientY };
+  });
+  const up = (e) => {
+    if (!nav.ptrs.delete(e.pointerId)) return;
+    if (nav.ptrs.size === 1) { const [q] = [...nav.ptrs.values()]; q.x0 = q.x; q.y0 = q.y; nav.last = { t: performance.now(), x: q.x, y: q.y }; nav.vx = nav.vz = 0; return; }   // pinch → one finger: no jump
+    if (nav.ptrs.size) return;
+    const idle = performance.now() - nav.last.t > 80;                                  // held still before lifting: no coast
+    const cap = 18; if (idle || still() || e.type === "pointercancel") nav.vx = nav.vz = 0; else { nav.vx = clamp(nav.vx, -cap, cap); nav.vz = clamp(nav.vz, -cap, cap); }
+    setTimeout(() => { nav.gesture = false; }, 0);                                     // after the peek's own pointerup has seen it
+  };
+  stageEl.addEventListener("pointerup", up); stageEl.addEventListener("pointercancel", up);
+  // iOS Safari: a pinch on the canvas zooms the river, not the page (only here — the page keeps its own zoom elsewhere)
+  ["gesturestart", "gesturechange"].forEach((n) => stageEl.addEventListener(n, (e) => { if (state.scene === "river") e.preventDefault(); }, { passive: false }));
+  $("#river-home").addEventListener("click", riverNavHome);
 }
 function bindRiver() {
   $("#place-card").addEventListener("click", onPanelAction);
   $("#btn-river-back").addEventListener("click", () => riverToMap());
   $("#btn-river-go").addEventListener("click", riverGo);
   $("#btn-craft-map").addEventListener("click", craftToMap);
-  bindRiverPeek();
+  bindRiverPeek(); bindRiverNav();
 }
 
 /* ==========================================================================
@@ -5831,6 +6157,7 @@ function markMapCraft(m) {
 function restoreWishScene() {
   ensure("fah"); restoreWorkshop("wish"); setScene("wish");
   stage.mood = state.candle ? 1 : 0.8; applyMood(); Object.assign(cam, VIEW.wish()); applyCamera();
+  if (compact()) setSheet("wish", "half", { instant: true });
   built3d.base = null; syncKrathong(state); syncOptionState();
   showPage(); initMap();
 }

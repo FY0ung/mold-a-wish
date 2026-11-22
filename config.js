@@ -12,5 +12,5 @@
 window.LK_CONFIG = {
   supabaseUrl: "https://tfosanmpxwvkgsjdggdo.supabase.co",
   supabasePublishableKey: "sb_publishable_HEwo-P-_BfNlRxWWOn6TMA_rjJr56Op",
-  publicSiteUrl: "",
+  publicSiteUrl: "https://fy0ung.github.io/mold-a-wish/",
 };

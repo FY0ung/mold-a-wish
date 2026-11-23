@@ -1105,6 +1105,17 @@ body:not(.is-map-craft) .map-craft-head, .is-map-craft .stage-head { display: no
 /* ---------- desktop: the sheet-only parts stay out of the way; the theme/sound pair sits in the bar as before ---------- */
 .sheet-grab { display: none; }
 .done-top, .done-stage, .done-bar, .wish-more { display: none; }
+/* analytics consent: a small glass card under the bar, out of the way of the 3D and the sheets */
+.ga-consent { position: fixed; z-index: 40; top: calc(var(--bar-h, 57px) + var(--sa-t, 0px) + 12px); right: calc(16px + var(--sa-r, 0px)); width: min(360px, calc(100vw - 24px)); padding: 14px 16px 12px;
+  border-radius: 20px; background: var(--glass); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); color: var(--ink);
+  box-shadow: var(--dropshadow-400), inset 0 0 0 1px color-mix(in srgb, var(--border-default) 70%, transparent); opacity: 0; translate: 0 -6px; transition: opacity 240ms ease, translate 300ms var(--ease-soft); }
+.ga-consent.is-on { opacity: 1; translate: 0 0; }
+.ga-consent[hidden] { display: none; }
+.ga-consent p { margin: 0; font-size: 13px; line-height: 1.6; }
+.ga-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.ga-actions .btn { min-height: 40px; }
+@media (max-width: 1023px) { .ga-consent { left: calc(12px + var(--sa-l, 0px)); right: calc(12px + var(--sa-r, 0px)); width: auto; } .ga-actions .btn { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .ga-consent { transition: none; } }
 /* the river on phones: a one-time swipe hint and the way back to your krathong (desktop: neither) */
 .river-hint, .river-home { display: none; }
 @media (max-width: 1023px) {
@@ -1496,6 +1507,10 @@ dialog.wv { inset: auto 0 0; width: auto; margin: 0 6px; padding: 8px 20px calc(
   </div>
 </div>
 <a class="credit-elemnt" href="https://elemnt.earth" target="_blank" rel="noopener noreferrer">Powered by ELEMNT</a>
+  <section class="ga-consent" id="ga-consent" role="region" data-i18n-attr="aria-label:ga.label" aria-label="การเก็บสถิติการใช้งาน" hidden>
+    <p data-i18n="ga.text">ขอเก็บสถิติการใช้งานแบบไม่ระบุตัวตน (Google Analytics) เพื่อพัฒนาประสบการณ์ ไม่มีโฆษณา และไม่เก็บคำอธิษฐานของคุณ</p>
+    <div class="ga-actions"><button type="button" class="btn btn-text btn-sm" id="ga-no" data-i18n="ga.no">ไม่ยอมรับ</button><button type="button" class="btn btn-primary btn-sm" id="ga-yes" data-i18n="ga.yes">ยอมรับ</button></div>
+  </section>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="curtain" id="curtain" aria-hidden="true"></div>
 
@@ -3565,7 +3580,7 @@ const I18N = {
     "done.story.wish": "แสดงคำอธิษฐานในภาพ Story", "done.story.preview": "ตัวอย่างภาพ Story 1080 × 1920",
     "done.story.saved": "บันทึกภาพ Story แล้ว", "done.story.manual": "ดาวน์โหลดภาพแล้ว · เปิด Instagram บนมือถือ แตะ + แล้วเลือกภาพนี้ใน Story",
     "done.story.shared": "เปิดหน้าต่างแชร์ของเครื่องแล้ว", "done.story.fail": "สร้างภาพ Story ไม่สำเร็จ ลองอีกครั้งนะ",
-    "done.link.copied": "คัดลอกลิงก์กระทงแล้ว", "done.more": "เพิ่มเติม", "rv.hint": "ปัดเพื่อสำรวจสายน้ำ", "rv.home": "กลับไปที่กระทงของฉัน", "rv.home.def": "กลับไปจุดเริ่มต้น", "done.wish.more": "อ่านต่อ", "done.story.view": "ภาพ Story ของคุณ", "done.story.open": "ดูภาพ Story",
+    "done.link.copied": "คัดลอกลิงก์กระทงแล้ว", "done.more": "เพิ่มเติม", "rv.hint": "ปัดเพื่อสำรวจสายน้ำ", "ga.text": "ขอเก็บสถิติการใช้งานแบบไม่ระบุตัวตน (Google Analytics) เพื่อพัฒนาประสบการณ์ ไม่มีโฆษณา และไม่เก็บคำอธิษฐานของคุณ", "ga.yes": "ยอมรับ", "ga.no": "ไม่ยอมรับ", "ga.label": "การเก็บสถิติการใช้งาน", "rv.home": "กลับไปที่กระทงของฉัน", "rv.home.def": "กลับไปจุดเริ่มต้น", "done.wish.more": "อ่านต่อ", "done.story.view": "ภาพ Story ของคุณ", "done.story.open": "ดูภาพ Story",
     "story.head": "คำอธิษฐานของฉัน\nออกเดินทางแล้ว ♡", "story.join": "มาลอยกระทงด้วยกัน!",
     "pc.start": "ยังไม่มีกระทง? เริ่มจากตรงนี้ได้เลย", "pc.pick": "เลือกกระทง", "pc.use": "ลอยกระทงเลย", "pc.clay": "ปั้นของตกแต่งจากรูป",
     "pc.river": "ดูแม่น้ำ", "pc.river.d": "ดูกระทงที่ลอยอยู่ที่นี่คืนนี้", "pc.yours": "กระทงของคุณ",
@@ -3857,7 +3872,7 @@ const CRAFTERS = ["min", "famai", "pai"];
 let helper = "min";
 const STEP_OF = { craft: 0, wish: 1, journey: 2, map: 2, river: 2, float: 3, done: 4 };
 function setScene(name) {
-  state.scene = name;
+  state.scene = name; trackScreen(name);
   body.className = body.className.replace(/\bscene-\w+/g, "").trim() + " scene-" + name;
   body.classList.toggle("is-night", ["journey", "map", "float", "done"].includes(name));
   if (name !== "done") body.classList.remove("is-settled");
@@ -3937,7 +3952,7 @@ function toCraft() {
   unlock(900);
 }
 function toWish() {
-  if (lock()) return; clearTimers(); hideBubbles(); clearTimeout(setHelper.t);
+  if (lock()) return; trackOnce("start", "start_crafting", gaKrathong()); trackOnce("craft", "craft_completed", gaKrathong()); clearTimers(); hideBubbles(); clearTimeout(setHelper.t);
   charReact(crew[helper]); say(helper, "say.crafted", 1700); const s = krScreen(); sparkBurst(s.x, s.y - 30, 18, 140); sfx.sparkle();
   setScene("wish"); tweenView("wish", 1.2); setMood(state.candle ? 1 : 0.8, 1.5);
   // the makers step back and fade out of view: the wish belongs to FAH alone
@@ -4147,7 +4162,7 @@ function cheer(kind) {
   else { kind === "base" ? charNod(c) : charReact(c); CRAFTERS.forEach((k) => { if (k !== helper) charBoop(crew[k]); }); }
   if (now - lastSpeak > 2400) { lastSpeak = now; say(helper, "say." + kind, 1700); }   // one short line now and then, never on every click
 }
-function changed(kind) { if (state.scene !== "craft") return; syncKrathong(state); syncOptionState(); if (imgList().length) renderClayOption(); if (kind === "flower" || kind === "random") hold("famai", helper === "famai", true); cheer(kind); }
+function changed(kind) { if (state.scene !== "craft") return; trackOnce("start", "start_crafting", gaKrathong()); syncKrathong(state); syncOptionState(); if (imgList().length) renderClayOption(); if (kind === "flower" || kind === "random") hold("famai", helper === "famai", true); cheer(kind); }
 function randomize() {
   if (state.scene !== "craft" || state.busy) return;
   const pick = (list, not) => { const o = list.filter((x) => x !== not); return o[Math.floor(Math.random() * o.length)]; };
@@ -4826,7 +4841,7 @@ function boot() {
   } finally { console.warn = warn; }
   resizeStage(); setSceneTheme(theme.current); makeStars(); makeThumbs();
   Object.assign(cam, VIEW.craft()); applyCamera(); placeLanterns();                      // the sky lanterns are composed for the craft view
-  bindDrag(); bindCraft(); bindWish(); bindChrome(); applyI18n(); selectTab("base"); setBg();
+  bindDrag(); bindCraft(); bindWish(); bindChrome(); applyI18n(); selectTab("base"); setBg(); bindAnalytics();
   drag.onPoke = (id) => { sfx.pop(); if (!state.busy) say(id, "say.poke", 1500); };
   raf = requestAnimationFrame(frame);
   requestAnimationFrame(() => requestAnimationFrame(() => { if (!restoreSession()) intro(); window.__ready = true; }));   // a reload opens where the visitor was
@@ -4838,7 +4853,7 @@ function boot() {
    community map is not connected. ?demo=1 shows clearly labelled sample data for a visual review.
    Client: the official supabase-js v2 (loaded from jsDelivr only when configured); Realtime, polling when that fails.
    ========================================================================== */
-const CFG = Object.assign({ supabaseUrl: "", supabasePublishableKey: "", supabaseAnonKey: "", publicSiteUrl: "" }, window.LK_CONFIG || {});
+const CFG = Object.assign({ supabaseUrl: "", supabasePublishableKey: "", supabaseAnonKey: "", publicSiteUrl: "", gaMeasurementId: "" }, window.LK_CONFIG || {});
 const QS = new URLSearchParams(location.search);
 const CM_MODE = CFG.supabaseUrl && (CFG.supabasePublishableKey || CFG.supabaseAnonKey) ? "live" : QS.get("demo") === "1" ? "demo" : "off";
 const PUBLIC_COLS = "id,created_at,place_id,lng,lat,base,flower,decor,candle,share_id,wish,form,sculpt,deco";
@@ -5153,7 +5168,9 @@ function beginRelease() {
   const send = cm.mode === "demo"
     ? new Promise((ok) => setTimeout(() => ok({ id: "demo-mine-" + release.key.slice(0, 8), created_at: new Date().toISOString(), place_id: body.p_place, base: body.p_base, flower: body.p_flower, decor: body.p_decor, candle: true, share_id: "", wish_status: body.p_wish ? "approved" : "none", form, sculpt_status: body.p_sculpt ? "approved" : "none", demo: true }), 500))
     : API.release(body);
+  const relKey = release.key;
   release.promise = send.then((row) => {
+    if (cm.mode === "live") trackRelease(relKey, !!body.p_wish && row.wish_status === "approved");   // analytics: the saved record, never the click
     release.status = "ok"; release.rec = row; release.wishStatus = row.wish_status || "none";
     mine.add(row.id); saved.mine = [...mine].slice(-20);
     // the owner's own words stay with their krathong in this browser (private or shared), so the river can show them later
@@ -5258,6 +5275,91 @@ function doneToMap() {
 }
 /** "ปั้นกระทงของคุณ" / "ปั้นกระทงอีกใบ" from the community map. */
 function exploreToCraft() { mapToCraft(); }
+
+/* ==========================================================================
+   16b · ANALYTICS — Google Analytics 4 (gtag.js), one small helper, nothing else talks to Google.
+   - Consent first: no tag, no cookie and no request until the visitor taps "ยอมรับ" (kept in localStorage).
+     "ไม่ยอมรับ" keeps it that way; events from before the choice wait in memory and are sent only after "ยอมรับ".
+   - Advertising stays off: ad_storage / ad_user_data / ad_personalization denied, Google signals off.
+   - Only controlled values leave the page (screen names, option ids, booleans, layout, theme). Never a wish, a picture,
+     a name, a krathong or user id, a place's coordinates or a private link.
+   - Each journey step is sent once: flags in sessionStorage survive a reload, so restoring a screen never repeats it;
+     a release is counted only when Supabase has answered with the saved record, once per release key.
+   - If the tag is blocked or offline, every call is a no-op and the page carries on.
+   ========================================================================== */
+const GA_ID = /^G-[A-Z0-9]{6,12}$/.test(CFG.gaMeasurementId || "") ? CFG.gaMeasurementId : "";
+const GA_CONSENT_KEY = "lk-analytics-consent";
+const ga = { consent: "", loaded: false, queue: [], lastScreen: "", screens: 0 };
+const SCREEN_NAME = { craft: "crafting", wish: "wish", map: "map", river: "river", done: "release_success" };
+
+function gaConsentRead() { try { return localStorage.getItem(GA_CONSENT_KEY) || ""; } catch (e) { return ""; } }
+function gaConsentWrite(v) { try { localStorage.setItem(GA_CONSENT_KEY, v); } catch (e) {} }
+const gaLayout = () => (VW < 768 ? "mobile" : VW < 1024 ? "tablet" : "desktop");
+const gaTheme = () => (root.dataset.theme === "dark" ? "dark" : "light");
+/** The few facts every event carries. */
+const gaBase = () => ({ device_layout: gaLayout(), theme_mode: gaTheme(), screen_name: SCREEN_NAME[state.scene] || "other" });
+const gaKrathong = () => ({ craft_base_type: BASES.includes(state.base) ? state.base : "none", has_custom_clay: !!(state.imgs.sculpt || state.imgs.badge), has_wish: !!state.wish });
+
+/** Load gtag.js once, after consent. */
+function gaLoad() {
+  if (ga.loaded || !GA_ID) return; ga.loaded = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  gtag("consent", "default", { analytics_storage: "granted", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+  gtag("js", new Date());
+  const debug = QS.get("ga_debug") === "1";                                          // DebugView for a test device only
+  gtag("config", GA_ID, { allow_google_signals: false, allow_ad_personalization_signals: false, page_title: "Mold a Wish",
+    page_location: location.origin + location.pathname, /* no query string: a shared krathong link never reaches Analytics */ ...(debug ? { debug_mode: true } : {}) });
+  const s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+  s.onerror = () => { ga.blocked = true; };                                            // blocked by an extension or offline: events become no-ops
+  document.head.appendChild(s);
+}
+/** Send one event (or hold it until the visitor decides). Never throws. */
+function track(name, params = {}) {
+  try {
+    if (!GA_ID || ga.consent === "denied") return;
+    const p = { ...gaBase(), ...params };
+    if (QS.get("ga_debug") === "1") p.debug_mode = true;
+    if (ga.consent !== "granted") { if (ga.queue.length < 30) ga.queue.push([name, p]); return; }
+    gaLoad(); gtag("event", name, p);
+  } catch (e) { /* analytics must never break the page */ }
+}
+/** Once per visit (survives a reload): the journey steps. */
+function trackOnce(flag, name, params) {
+  let seen = false; try { seen = sessionStorage.getItem("lk-ga:" + flag) === "1"; sessionStorage.setItem("lk-ga:" + flag, "1"); } catch (e) {}
+  if (!seen) track(name, params);
+}
+function gaResetCycle() { try { ["start", "craft"].forEach((f) => sessionStorage.removeItem("lk-ga:" + f)); } catch (e) {} }
+/** A screen change inside the one page: a custom event, not a new page view. The first screen is the page view itself. */
+function trackScreen(scene) {
+  const n = SCREEN_NAME[scene]; if (!n || n === ga.lastScreen) return;
+  ga.lastScreen = n; if (ga.screens++ === 0) return;
+  track("screen_enter", { screen_name: n });
+}
+/** Supabase has saved the krathong: count it once per release key, ever. */
+function trackRelease(key, withWish) {
+  let done = []; try { done = JSON.parse(localStorage.getItem("lk-ga-released") || "[]"); } catch (e) {}
+  if (!key || done.includes(key)) return;
+  try { localStorage.setItem("lk-ga-released", JSON.stringify([...done, key].slice(-30))); } catch (e) {}
+  const k = gaKrathong();
+  track("krathong_released", k);
+  if (withWish) track("wish_submitted", k);
+  gaResetCycle();                                                                      // the next krathong is a new journey
+}
+
+function bindAnalytics() {
+  if (!GA_ID) return;
+  ga.consent = gaConsentRead();
+  if (ga.consent === "granted") { gaLoad(); return; }
+  if (ga.consent === "denied") return;
+  const box = $("#ga-consent"); box.hidden = false; requestAnimationFrame(() => box.classList.add("is-on"));
+  const decide = (v) => {
+    ga.consent = v; gaConsentWrite(v); box.classList.remove("is-on"); setTimeout(() => { box.hidden = true; }, 260);
+    if (v === "granted") { gaLoad(); const q = ga.queue.splice(0); q.forEach(([n, p]) => gtag("event", n, p)); } else ga.queue.length = 0;
+  };
+  $("#ga-yes").addEventListener("click", () => decide("granted"));
+  $("#ga-no").addEventListener("click", () => decide("denied"));
+}
 
 /* ==========================================================================
    14 · THE STORY IMAGE — a designed 1080 × 1920 portrait, not a screenshot of the page
@@ -5371,17 +5473,17 @@ async function renderStoryPreview() {
 const storyFile = (b) => new File([b], "moldable-loykrathong-story.png", { type: "image/png" });
 function download(b) { const a = document.createElement("a"); a.href = story.url || URL.createObjectURL(b); a.download = "moldable-loykrathong-story.png"; document.body.appendChild(a); a.click(); a.remove(); }
 async function downloadStory() {
-  try { const b = await storyImage(); download(b); toast("done.story.saved"); } catch (e) { toast("done.story.fail"); }
+  try { const b = await storyImage(); download(b); toast("done.story.saved"); track("story_downloaded", { share_method: "download", has_wish: !!state.wish }); } catch (e) { toast("done.story.fail"); }
 }
 /** "แชร์ลง IG Story": the device's own share sheet when it can take an image file; otherwise the PNG is saved, with a one-line how-to. */
 async function shareStory() {
   let b; try { b = await storyImage(); } catch (e) { toast("done.story.fail"); return; }
   const file = storyFile(b);
   if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: "Moldable — Little Wishes, Big River" }); toast("done.story.shared"); return; }
+    try { await navigator.share({ files: [file], title: "Moldable — Little Wishes, Big River" }); toast("done.story.shared"); track("story_shared", { share_method: "web_share", has_wish: !!state.wish }); return; }
     catch (e) { if (e && e.name === "AbortError") return; }                           // the visitor closed the sheet: nothing else to do
   }
-  download(b); toast("done.story.manual", null, 5200);
+  download(b); toast("done.story.manual", null, 5200); track("story_downloaded", { share_method: "share_fallback", has_wish: !!state.wish });
 }
 
 /* ==========================================================================
@@ -5695,7 +5797,7 @@ function applyClay() {
   const r = clay2d.result; if (!r) return;
   disposePiece(clay2d.piece); clay2d.piece = null;
   state.imgs[clay2d.kind] = { ...r, thumb: clayPreview(r, 120).toDataURL("image/png"), share: cm.mode !== "off", recipe: toRecipe(r) };
-  setClayImages(imgList()); renderClayOption(); closeClayDialog();
+  setClayImages(imgList()); renderClayOption(); closeClayDialog(); if (state.scene === "craft") trackOnce("start", "start_crafting", gaKrathong());
   const after = clay2d.after; clay2d.after = null;
   if (after) after(); else { sfx.sparkle(); clayCheer(2200); }
 }
@@ -5873,8 +5975,10 @@ function riverPick(list) {
   for (let i = 0, a = 0, b = 0; out.length < clay.length + plain.length; i++) { if (i % 2 === 0 && a < clay.length) out.push(clay[a++]); else if (b < plain.length) out.push(plain[b++]); else if (a < clay.length) out.push(clay[a++]); }
   return out.map(withClay);
 }
+let riverRestored = false;                                                             // a reload reopening the river is not a new view
 function toRiver() {
   const p = placeOf(state.place); if (!p || state.busy || state.scene !== "map") return;
+  if (riverRestored) riverRestored = false; else track("river_viewed", { has_krathong: holding() || [...cm.items.values()].some((r) => mine.has(r.id) && r.place_id === p.id) });
   lock(); clearTimers(); hideBubbles(); closeCard();
   riverUi.hold = holding(); riverUi.prevCam = { ...cam };
   // if this visitor already floated a krathong here, it is theirs at the front
@@ -6144,7 +6248,7 @@ function restoreSession() {
     if (done) floated = true;
     const explore = sc === "map" ? !!s.explore : sc === "river" ? s.riverHold === false : done;
     restoreMapScene(explore, view);
-    if (sc === "river" && state.place) whenReady(() => mapState === "ready" && !["idle", "loading"].includes(cm.status) && !state.busy, () => { if (state.scene === "map") toRiver(); });
+    if (sc === "river" && state.place) whenReady(() => mapState === "ready" && !["idle", "loading"].includes(cm.status) && !state.busy, () => { if (state.scene === "map") { riverRestored = true; toRiver(); } });
     return true;
   }
   return false;

@@ -5978,7 +5978,7 @@ function riverPick(list) {
 let riverRestored = false;                                                             // a reload reopening the river is not a new view
 function toRiver() {
   const p = placeOf(state.place); if (!p || state.busy || state.scene !== "map") return;
-  if (riverRestored) riverRestored = false; else track("river_viewed", { has_krathong: holding() || [...cm.items.values()].some((r) => mine.has(r.id) && r.place_id === p.id) });
+  if (riverRestored) riverRestored = false; else track("river_viewed", { screen_name: "river", has_krathong: holding() || [...cm.items.values()].some((r) => mine.has(r.id) && r.place_id === p.id) });
   lock(); clearTimers(); hideBubbles(); closeCard();
   riverUi.hold = holding(); riverUi.prevCam = { ...cam };
   // if this visitor already floated a krathong here, it is theirs at the front
